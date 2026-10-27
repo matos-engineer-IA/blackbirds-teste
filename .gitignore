@@ -1,0 +1,17 @@
+node_modules/
+dist/
+coverage/
+.vite/
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.*
+!.env.example
+test-results/
+playwright-report/
+playwright/.cache/
+*.tsbuildinfo
+.idea/
+.vscode/
+!.vscode/extensions.json

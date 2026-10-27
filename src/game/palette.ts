@@ -1,0 +1,15 @@
+export const palette = {
+  bg: 0x070b14,
+  shadow: 0x1a0a24,
+  cyan: 0x2de2e6,
+  magenta: 0xff2d95,
+  alert: 0xff3355,
+  lamp: 0xffb020,
+  steel: 0x3d4d62,
+  steelLight: 0x6a7d93,
+  darkSteel: 0x1c2430,
+  rust: 0x8a4a32,
+  nexus: 0x3a2158,
+  text: 0xd6f6ff,
+  muted: 0x7f93a8,
+} as const;
