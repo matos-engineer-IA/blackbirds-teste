@@ -1,6 +1,8 @@
 import Phaser from "phaser";
 import { palette } from "./palette";
+import { ArenaScene } from "./scenes/ArenaScene";
 import { BootScene } from "./scenes/BootScene";
+import { BossArenaScene } from "./scenes/BossArenaScene";
 import { GameScene } from "./scenes/GameScene";
 import { MenuScene } from "./scenes/MenuScene";
 import { UIScene } from "./scenes/UIScene";
@@ -26,11 +28,11 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
       debug: false,
     },
   },
-  scene: [BootScene, MenuScene, GameScene, UIScene],
+  scene: [BootScene, MenuScene, GameScene, UIScene, ArenaScene, BossArenaScene],
 };
 
 export function startGame(parent: string): Phaser.Game {
   const game = new Phaser.Game({ ...gameConfig, parent });
-  (window as Window & { neonFall?: Phaser.Game }).neonFall = game;
+  (window as Window & { blackBird?: Phaser.Game }).blackBird = game;
   return game;
 }

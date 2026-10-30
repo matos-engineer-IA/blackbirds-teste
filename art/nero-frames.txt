@@ -1,0 +1,4 @@
+frames=11
+frame=120x192
+body=144px (cartola excluida da medida)
+ordem aproximada: idle, idle, walk, walk, walk, jump, fall, melee1, melee2, aim, shoot

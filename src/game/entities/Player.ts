@@ -1,8 +1,10 @@
 import Phaser from "phaser";
 import { applyDamage } from "../mechanics/combat";
 import { canJump, cutJump, integrateHorizontal, nextCoyote, nextJumpBuffer } from "../mechanics/movement";
-import { canStartDash, tickDash } from "../mechanics/neonDash";
+import { afterShot, canFire, meleeDamage, nextMeleeStep } from "../mechanics/weapons";
+import { addContactShadow, anchorFeet } from "../utils/footAnchor";
 import { PLAYER } from "../utils/constants";
+import { SCALE } from "../utils/scale";
 import { sfx } from "../utils/audio";
 
 export type PlayerInput = {
@@ -10,9 +12,12 @@ export type PlayerInput = {
   right: boolean;
   jump: boolean;
   jumpPressed: boolean;
-  attack: boolean;
-  dash: boolean;
+  melee: boolean;
+  fire: boolean;
+  reload: boolean;
 };
+
+type AnimState = "idle" | "walk" | "jump" | "fall" | "land" | "melee" | "shoot" | "reload" | "hurt";
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   hp: number = PLAYER.maxHp;
@@ -22,30 +27,34 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   iFrameMs = 0;
   attackMs = 0;
   attackCdMs = 0;
-  dashMs = 0;
-  dashCdMs = 0;
-  airDashUsed = false;
-  hasDash = false;
+  meleeStep = 0;
+  comboMs = 0;
+  fireCdMs = 0;
+  reloadMs = 0;
+  landMs = 0;
+  ammo: number = PLAYER.maxAmmo;
+  combatEnabled = false;
+  locked = false;
   wasOnGround = false;
-  private slash?: Phaser.GameObjects.Sprite;
+  private steam?: Phaser.GameObjects.Particles.ParticleEmitter;
+  private shadow: Phaser.GameObjects.Image;
+  private animState: AnimState = "idle";
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
-    super(scene, x, y, "player", 0);
+    super(scene, x, y, "nero", 0);
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.setDepth(8);
-    this.setScale(1.15);
+    anchorFeet(this, SCALE.neroFrame.w, SCALE.neroFrame.h, 24, 86);
     const body = this.body as Phaser.Physics.Arcade.Body;
-    body.setSize(10, 16);
-    body.setOffset(7, 8);
-    body.setMaxVelocity(720, 560);
+    body.setMaxVelocity(420, 560);
     body.setCollideWorldBounds(true);
     this.setDrag(0);
+    this.shadow = addContactShadow(scene, this);
   }
 
-  attachSlash(slash: Phaser.GameObjects.Sprite): void {
-    this.slash = slash;
-    this.slash.setVisible(false).setDepth(9);
+  attachSteam(emitter: Phaser.GameObjects.Particles.ParticleEmitter): void {
+    this.steam = emitter;
   }
 
   get onGround(): boolean {
@@ -53,149 +62,136 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     return body.blocked.down || body.touching.down;
   }
 
-  get isDashing(): boolean {
-    return this.dashMs > 0;
-  }
-
-  get invulnerable(): boolean {
-    return this.iFrameMs > 0 || this.isDashing;
-  }
-
   get attacking(): boolean {
     return this.attackMs > 0;
-  }
-
-  syncFromRun(hp: number, hasDash: boolean): void {
-    this.hp = hp;
-    this.hasDash = hasDash;
   }
 
   updatePlayer(input: PlayerInput, dtMs: number): void {
     const dt = dtMs / 1000;
     const body = this.body as Phaser.Physics.Arcade.Body;
     const grounded = this.onGround;
-
     this.coyoteMs = nextCoyote(grounded, this.coyoteMs, dtMs, PLAYER.coyoteMs);
     this.jumpBufferMs = nextJumpBuffer(input.jumpPressed, this.jumpBufferMs, dtMs, PLAYER.jumpBufferMs);
     this.iFrameMs = Math.max(0, this.iFrameMs - dtMs);
     this.attackMs = Math.max(0, this.attackMs - dtMs);
     this.attackCdMs = Math.max(0, this.attackCdMs - dtMs);
+    this.comboMs = Math.max(0, this.comboMs - dtMs);
+    this.fireCdMs = Math.max(0, this.fireCdMs - dtMs);
+    this.reloadMs = Math.max(0, this.reloadMs - dtMs);
+    this.landMs = Math.max(0, this.landMs - dtMs);
+    this.shadow.setPosition(this.x, this.y - 1).setVisible(grounded);
 
-    const dash = tickDash(
-      {
-        unlocked: this.hasDash,
-        activeMs: this.dashMs,
-        cooldownMs: this.dashCdMs,
-        airUsed: this.airDashUsed,
-        onGround: grounded,
-      },
-      dtMs,
-      PLAYER.dashMs,
-      PLAYER.dashCooldownMs,
-    );
-    this.dashMs = dash.activeMs;
-    this.dashCdMs = dash.cooldownMs;
-    this.airDashUsed = dash.airUsed;
-
-    if (canStartDash({ ...dash, activeMs: this.dashMs, cooldownMs: this.dashCdMs }, input.dash)) {
-      this.dashMs = PLAYER.dashMs;
-      this.airDashUsed = !grounded;
-      body.setVelocity(this.facing * PLAYER.dashSpeed, 0);
-      body.allowGravity = false;
-      sfx.dash();
-      this.scene.cameras.main.shake(80, 0.002);
+    if (this.locked) {
+      body.setVelocity(0, body.velocity.y);
+      this.setAnim("idle");
+      return;
     }
 
-    if (this.isDashing) {
-      body.setVelocity(this.facing * PLAYER.dashSpeed, 0);
-      body.allowGravity = false;
-    } else {
-      body.allowGravity = true;
-      const dir: -1 | 0 | 1 = input.left ? -1 : input.right ? 1 : 0;
-      if (dir !== 0) this.facing = dir;
-      body.setVelocityX(
-        integrateHorizontal(body.velocity.x, dir, dt, PLAYER.accel, PLAYER.decel, PLAYER.walkSpeed),
-      );
-    }
+    const dir: -1 | 0 | 1 = input.left ? -1 : input.right ? 1 : 0;
+    if (dir !== 0 && this.attackMs <= 0) this.facing = dir;
+    const speed = this.attackMs > 0 ? PLAYER.walkSpeed * 0.35 : PLAYER.walkSpeed;
+    body.setVelocityX(integrateHorizontal(body.velocity.x, this.attackMs > 80 ? 0 : dir, dt, PLAYER.accel, PLAYER.decel, speed));
 
-    if (this.jumpBufferMs > 0 && canJump(grounded, this.coyoteMs) && !this.isDashing) {
+    if (this.jumpBufferMs > 0 && canJump(grounded, this.coyoteMs) && this.attackMs <= 0) {
       body.setVelocityY(-PLAYER.jumpVelocity);
       this.coyoteMs = 0;
       this.jumpBufferMs = 0;
-      this.airDashUsed = false;
       sfx.jump();
-    } else if (!this.isDashing) {
+    } else {
       body.setVelocityY(cutJump(body.velocity.y, input.jump, PLAYER.jumpCut));
     }
 
-    if (input.attack && this.attackCdMs <= 0 && !this.isDashing) {
-      this.attackMs = PLAYER.attackMs;
+    if (this.combatEnabled && input.melee && this.attackCdMs <= 0) {
+      this.meleeStep = nextMeleeStep(this.meleeStep, this.comboMs > 0);
+      this.attackMs = this.meleeStep >= 3 ? 220 : PLAYER.attackMs;
       this.attackCdMs = PLAYER.attackCooldownMs;
+      this.comboMs = PLAYER.meleeComboWindowMs;
       sfx.attack();
+      if (this.meleeStep >= 3) {
+        sfx.steam();
+        this.steam?.explode(6, this.x + this.facing * 18, this.y - 48);
+      }
+    }
+
+    if (this.combatEnabled && input.reload && this.reloadMs <= 0 && this.ammo < PLAYER.maxAmmo) {
+      this.reloadMs = PLAYER.reloadMs;
+      this.ammo = PLAYER.maxAmmo;
+      this.animState = "reload";
+      sfx.reload();
+    }
+
+    if (this.combatEnabled && input.fire && canFire(this.ammo, this.fireCdMs, this.reloadMs > 0)) {
+      this.ammo = afterShot(this.ammo);
+      this.fireCdMs = PLAYER.revolverCooldownMs;
+      this.attackMs = 140;
+      body.setVelocityX(body.velocity.x - this.facing * PLAYER.revolverRecoil);
+      sfx.shot();
+      this.scene.cameras.main.shake(40, 0.0012);
     }
 
     if (grounded && !this.wasOnGround && body.velocity.y >= 0) {
       sfx.land();
+      this.landMs = 90;
     }
     this.wasOnGround = grounded;
     this.setFlipX(this.facing < 0);
-    this.updateAnim();
-    this.updateSlash();
-    this.setAlpha(this.iFrameMs > 0 && !this.isDashing && Math.floor(this.iFrameMs / 80) % 2 === 0 ? 0.45 : 1);
+    this.refreshAnim();
+    this.setAlpha(this.iFrameMs > 0 && Math.floor(this.iFrameMs / 80) % 2 === 0 ? 0.45 : 1);
   }
 
   takeHit(fromX: number): boolean {
-    const next = applyDamage(this.hp, 1, this.invulnerable);
+    const next = applyDamage(this.hp, 1, this.iFrameMs > 0);
     if (next === this.hp) return false;
     this.hp = next;
     this.iFrameMs = PLAYER.iFrameMs;
     const body = this.body as Phaser.Physics.Arcade.Body;
-    const dir = this.x < fromX ? -1 : 1;
-    body.setVelocity(dir * PLAYER.knockbackX, -PLAYER.knockbackY);
-    this.scene.cameras.main.shake(120, 0.004);
+    body.setVelocity((this.x < fromX ? -1 : 1) * PLAYER.knockbackX, -PLAYER.knockbackY);
     sfx.hit();
     return true;
   }
 
   attackHitbox(): Phaser.Geom.Rectangle {
-    const x = this.facing > 0 ? this.x + 8 : this.x - 8 - PLAYER.attackRange;
-    return new Phaser.Geom.Rectangle(x, this.y - 8, PLAYER.attackRange + 8, 16);
+    const wide = this.meleeStep >= 3 ? PLAYER.attackRange + 18 : PLAYER.attackRange;
+    const x = this.facing > 0 ? this.x + 18 : this.x - 18 - wide;
+    return new Phaser.Geom.Rectangle(x, this.y - 70, wide + 14, 42);
   }
 
-  private updateAnim(): void {
-    if (this.iFrameMs > 800) {
-      this.play("player-hurt", true);
+  lastMeleeDamage(): number {
+    return meleeDamage(this.meleeStep);
+  }
+
+  private setAnim(next: AnimState): void {
+    if (this.animState === next && this.anims.isPlaying) return;
+    this.animState = next;
+    const key = `player-${next === "walk" ? "run" : next}`;
+    if (this.anims.currentAnim?.key !== key) this.play(key, true);
+  }
+
+  private refreshAnim(): void {
+    if (this.iFrameMs > 750) {
+      this.setAnim("hurt");
       return;
     }
-    if (this.isDashing) {
-      this.play("player-dash", true);
+    if (this.reloadMs > 0) {
+      this.setAnim("reload");
       return;
     }
     if (this.attacking) {
-      this.play("player-attack", true);
+      this.setAnim(this.fireCdMs > PLAYER.revolverCooldownMs - 90 ? "shoot" : "melee");
       return;
     }
-    const body = this.body as Phaser.Physics.Arcade.Body;
     if (!this.onGround) {
-      this.play(body.velocity.y < 0 ? "player-jump" : "player-fall", true);
+      this.setAnim((this.body as Phaser.Physics.Arcade.Body).velocity.y < 0 ? "jump" : "fall");
       return;
     }
-    if (Math.abs(body.velocity.x) > 12) {
-      this.play("player-run", true);
+    if (this.landMs > 0) {
+      this.setAnim("land");
       return;
     }
-    this.play("player-idle", true);
-  }
-
-  private updateSlash(): void {
-    if (!this.slash) return;
-    if (!this.attacking) {
-      this.slash.setVisible(false);
+    if (Math.abs((this.body as Phaser.Physics.Arcade.Body).velocity.x) > 12) {
+      this.setAnim("walk");
       return;
     }
-    this.slash.setVisible(true);
-    this.slash.setPosition(this.x + this.facing * 16, this.y);
-    this.slash.setFlipX(this.facing < 0);
-    this.slash.play("slash", true);
+    this.setAnim("idle");
   }
 }

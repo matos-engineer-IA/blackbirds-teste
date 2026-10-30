@@ -1,10 +1,6 @@
 :root {
-  --bg: #05070d;
-  --panel: #070b14;
-  --cyan: #2de2e6;
-  --magenta: #ff2d95;
-  --text: #d6f6ff;
-  --muted: #7f93a8;
+  --bg: #0c0a08;
+  --text: #efe4d0;
 }
 
 * {
@@ -12,98 +8,18 @@
 }
 
 html,
-body {
-  margin: 0;
-  min-height: 100%;
-  background:
-    radial-gradient(ellipse at 50% 0%, #182038 0%, var(--bg) 58%),
-    #05070d;
-  color: var(--text);
-  font-family: ui-monospace, "Cascadia Code", Consolas, "Courier New", monospace;
-}
-
-#app {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 24px 16px 32px;
-}
-
-#cabinet {
-  width: min(960px, 100%);
-  background: linear-gradient(180deg, #10182a 0%, #070b14 100%);
-  border: 2px solid var(--cyan);
-  box-shadow:
-    0 0 0 1px #ff2d9533,
-    0 0 28px #2de2e655,
-    0 18px 50px #000000aa;
-}
-
-.plate {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 10px 16px 6px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.plate.bottom {
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 8px 16px 12px;
-  color: var(--muted);
-  font-size: 11px;
-}
-
-.eyebrow {
-  margin: 0;
-  color: var(--magenta);
-  font-size: 11px;
-}
-
-h1 {
-  margin: 4px 0 0;
-  font-size: clamp(20px, 3.4vw, 28px);
-  color: var(--cyan);
-  letter-spacing: 0.08em;
-  text-shadow: none;
-}
-
-.subtitle {
-  margin: 2px 0 0;
-  font-size: 12px;
-  color: var(--muted);
-}
-
-#game-shell {
-  position: relative;
-  margin: 0 12px 8px;
-  background: #03050c;
-  border: 1px solid #2de2e644;
-}
-
+body,
 #game-container {
+  margin: 0;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 100%;
   overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
 }
 
 #game-container canvas {
   display: block;
-  width: 100% !important;
-  height: 100% !important;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
-}
-
-.scanlines {
-  display: none;
-}
-
-@media (max-width: 720px) {
-  .plate.bottom {
-    flex-direction: column;
-    gap: 4px;
-  }
 }

@@ -9,7 +9,7 @@ describe("arquivos web estaticos", () => {
     const index = readFileSync(resolve("index.html"), "utf8");
     expect(health).toContain("ok");
     expect(index).toContain("game-container");
-    expect(index).toContain("NEON FALL");
+    expect(index).toContain("Black Bird: Revolução");
   });
 
   it("responde 200 em /health.html quando servido", async () => {

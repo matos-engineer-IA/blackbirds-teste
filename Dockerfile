@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-# NEON FALL: PROTOCOL ZERO — static web build served by Nginx.
+# Black Bird: Revolução — static web build served by Nginx.
 # Internal HTTP port: 8080
 # Health check: GET /health.html
 

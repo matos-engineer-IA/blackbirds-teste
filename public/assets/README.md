@@ -1,12 +1,12 @@
-# Assets
+# Assets de jogo
 
-Sprites gerados por `npm run assets` (`scripts/generate-assets.mjs`).
+- `painted/street-operario.png` — quarteirão pintado (padrão visual atual)
+- `characters/player.png` — Nero 80×120
+- `characters/npc-*.png` — Ilda, operário, criança, mecânico
+- `backgrounds/` — horizonte, telhados, primeiro plano
+- `ui/dialogue.png` — painel de fala
+- `tilesets/` — só regiões ainda não pintadas
+- `fx/` — vapor, lâmpada, brilho
 
-- `tilesets/` — tiles 18×18 industriais
-- `characters/` — infiltrador
-- `enemies/` — drone e sentinela
-- `backgrounds/` — parallax de Vesper-9
-- `fx/` — corte do ataque
-- `ui/` — vida e ícone do dash
-
-Licenças e créditos: ver `/LICENSES.md`.
+Regenerar arte pintada: `npm run art`  
+Regenerar tiles auxiliares: `npm run assets`

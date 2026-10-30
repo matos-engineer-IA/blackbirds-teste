@@ -1,17 +1,19 @@
 import Phaser from "phaser";
 import { palette } from "../palette";
 import { createRun } from "../systems/runState";
-import { sfx } from "../utils/audio";
+import { sfx, unlockAudio } from "../utils/audio";
 import { SCENE } from "../utils/constants";
 
-type MenuKey = "start" | "controls" | "credits";
+type MenuKey = "start" | "arena" | "boss" | "controls" | "credits";
 
 export class MenuScene extends Phaser.Scene {
   private cursor = 0;
   private labels: Phaser.GameObjects.Text[] = [];
   private panel?: Phaser.GameObjects.Container;
   private readonly items: { key: MenuKey; text: string }[] = [
-    { key: "start", text: "INICIAR" },
+    { key: "start", text: "NOVO JOGO" },
+    { key: "arena", text: "CAMPO DE PROVAS" },
+    ...(import.meta.env.DEV ? [{ key: "boss" as const, text: "ARENA WINSTH (DEV)" }] : []),
     { key: "controls", text: "CONTROLES" },
     { key: "credits", text: "CREDITOS" },
   ];
@@ -22,37 +24,27 @@ export class MenuScene extends Phaser.Scene {
 
   create(): void {
     const { width, height } = this.scale;
-    this.add.tileSprite(width / 2, height / 2, width, height, "bg-far").setScrollFactor(0);
-    this.add.tileSprite(width / 2, height / 2 + 20, width, height, "bg-mid").setScrollFactor(0).setAlpha(0.85);
-    this.add.tileSprite(width / 2, height / 2 + 40, width, height, "bg-near").setScrollFactor(0).setAlpha(0.9);
-    this.add.rectangle(width / 2, height / 2, width, height, palette.bg, 0.28);
-
-    this.add.text(width / 2, 42, "NEON FALL", {
-      fontFamily: "monospace",
+    this.add.tileSprite(width / 2, 110, width, 220, "bg-far").setScrollFactor(0);
+    this.add.tileSprite(width / 2, 200, width, 250, "bg-mid").setScrollFactor(0).setAlpha(0.92);
+    this.add.rectangle(width / 2, height / 2, width, height, palette.bg, 0.22);
+    this.add.text(width / 2, 72, "Black Bird: Revolução", {
+      fontFamily: "Georgia, serif",
       fontSize: "22px",
-      color: "#2de2e6",
+      color: "#c4a36a",
     }).setOrigin(0.5);
-
-    this.add.text(width / 2, 64, "PROTOCOL ZERO", {
-      fontFamily: "monospace",
-      fontSize: "11px",
-      color: "#ff2d95",
-    }).setOrigin(0.5);
-
-    this.add.text(width / 2, 86, "Vesper-9 sob controle da NEXUS. Recupere o nucleo.", {
-      fontFamily: "monospace",
-      fontSize: "8px",
-      color: "#7f93a8",
+    this.add.text(width / 2, 110, "Prólogo — O Último Dia", {
+      fontFamily: "Georgia, serif",
+      fontSize: "12px",
+      color: "#e6c36a",
     }).setOrigin(0.5);
 
     this.labels = this.items.map((item, index) =>
-      this.add.text(width / 2, 128 + index * 22, item.text, {
+      this.add.text(width / 2, 150 + index * 22, item.text, {
         fontFamily: "monospace",
         fontSize: "12px",
-        color: "#d6f6ff",
+        color: "#efe4d0",
       }).setOrigin(0.5).setInteractive({ useHandCursor: true }),
     );
-
     this.labels.forEach((label, index) => {
       label.on("pointerover", () => {
         this.cursor = index;
@@ -60,13 +52,11 @@ export class MenuScene extends Phaser.Scene {
       });
       label.on("pointerdown", () => this.activate());
     });
-
-    this.add.text(width / 2, height - 16, "ENTER / CLIQUE  ·  ESC fecha paineis", {
+    this.add.text(width / 2, height - 18, "ENTER inicia  ·  Nero vai buscar a filha na escola", {
       fontFamily: "monospace",
-      fontSize: "8px",
-      color: "#7f93a8",
+      fontSize: "9px",
+      color: "#9a8770",
     }).setOrigin(0.5);
-
     this.input.keyboard?.on("keydown-UP", () => this.move(-1));
     this.input.keyboard?.on("keydown-DOWN", () => this.move(1));
     this.input.keyboard?.on("keydown-W", () => this.move(-1));
@@ -78,6 +68,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   private move(delta: number): void {
+    unlockAudio();
     this.cursor = (this.cursor + delta + this.items.length) % this.items.length;
     sfx.ui();
     this.refresh();
@@ -86,18 +77,28 @@ export class MenuScene extends Phaser.Scene {
   private refresh(): void {
     this.labels.forEach((label, index) => {
       const active = index === this.cursor;
-      label.setColor(active ? "#2de2e6" : "#d6f6ff");
+      label.setColor(active ? "#e6c36a" : "#efe4d0");
       label.setText(active ? `> ${this.items[index].text} <` : this.items[index].text);
     });
   }
 
   private activate(): void {
+    unlockAudio();
     sfx.ui();
     const selected = this.items[this.cursor];
     if (selected.key === "start") {
       this.registry.set("run", createRun());
       this.scene.start(SCENE.game);
       this.scene.launch(SCENE.ui);
+      return;
+    }
+    if (selected.key === "arena") {
+      this.scene.start(SCENE.arena);
+      this.scene.launch(SCENE.ui);
+      return;
+    }
+    if (selected.key === "boss") {
+      this.scene.start(SCENE.boss);
       return;
     }
     this.showPanel(selected.key);
@@ -108,13 +109,13 @@ export class MenuScene extends Phaser.Scene {
     const { width, height } = this.scale;
     const body =
       kind === "controls"
-        ? "A/D ou SETAS  mover\nESPACO / W  pular\nZ / J  atacar\nSHIFT / L  Neon Dash\nE  interagir\nESC  pausar"
-        : "Jogo original para o piloto Huddle Engineering.\nEngine Phaser 4  ·  Vite  ·  TypeScript\nArte pixel 18x18 inspirada em Kenney CC0\nAudio sintetizado no navegador";
-    const box = this.add.rectangle(width / 2, height / 2 + 18, 300, 130, 0x070b14, 0.92).setStrokeStyle(1, 0x2de2e6);
-    const text = this.add.text(width / 2, height / 2 + 18, body, {
+        ? "A/D ou SETAS  andar\nESPACO / W  pular\nE  falar / interagir\nESC  pausar\nF1  debug de colisao\n\nCombate (arenas):\nJ ou Z  soco\nK ou X  revolver\nR  recarregar"
+        : "Jogo original. Arte pintada e pixelizada no projeto.\nPhaser 4 · Vite · TypeScript\nNenhum sprite comercial foi copiado.";
+    const box = this.add.rectangle(width / 2, height / 2 + 24, 360, 150, 0x1a1410, 0.94).setStrokeStyle(2, 0xc4a36a);
+    const text = this.add.text(width / 2, height / 2 + 24, body, {
       fontFamily: "monospace",
-      fontSize: "10px",
-      color: "#d6f6ff",
+      fontSize: "11px",
+      color: "#efe4d0",
       align: "center",
     }).setOrigin(0.5);
     this.panel = this.add.container(0, 0, [box, text]);

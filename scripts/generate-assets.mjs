@@ -56,14 +56,12 @@ class Pix {
     this.h = h;
     this.data = new Uint8Array(w * h * 4);
   }
-
   hex(hex) {
     const n = parseInt(hex.slice(1), 16);
     return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
   }
-
   p(x, y, hex, a = 255) {
-    if (x < 0 || y < 0 || x >= this.w || y >= this.h) return;
+    if (x < 0 || y < 0 || x >= this.w || y >= this.h || !hex) return;
     const [r, g, b] = this.hex(hex);
     const i = (y * this.w + x) * 4;
     this.data[i] = r;
@@ -71,24 +69,21 @@ class Pix {
     this.data[i + 2] = b;
     this.data[i + 3] = a;
   }
-
   fill(x, y, w, h, hex, a = 255) {
     for (let yy = y; yy < y + h; yy += 1) {
       for (let xx = x; xx < x + w; xx += 1) this.p(xx, yy, hex, a);
     }
   }
-
-  rect(x, y, w, h, hex, a = 255) {
+  rect(x, y, w, h, hex) {
     for (let xx = x; xx < x + w; xx += 1) {
-      this.p(xx, y, hex, a);
-      this.p(xx, y + h - 1, hex, a);
+      this.p(xx, y, hex);
+      this.p(xx, y + h - 1, hex);
     }
     for (let yy = y; yy < y + h; yy += 1) {
-      this.p(x, yy, hex, a);
-      this.p(x + w - 1, yy, hex, a);
+      this.p(x, yy, hex);
+      this.p(x + w - 1, yy, hex);
     }
   }
-
   stamp(sx, sy, map, colors) {
     map.forEach((row, y) => {
       [...row].forEach((ch, x) => {
@@ -99,25 +94,23 @@ class Pix {
 }
 
 const C = {
-  void: "#000000",
-  bg: "#070b14",
-  shadow: "#1a0a24",
-  cyan: "#2de2e6",
-  cyanD: "#178a8e",
-  mag: "#ff2d95",
-  red: "#ff3355",
-  lamp: "#ffb020",
-  steel: "#5b7190",
-  steelL: "#9bb3cc",
-  steelD: "#243044",
-  rust: "#8a4a32",
-  rustL: "#c4724a",
-  rustD: "#4a2418",
-  nexus: "#3a2158",
-  nexusL: "#6b3d91",
-  skin: "#c9b6a0",
-  suit: "#121826",
-  visor: "#2de2e6",
+  leather: "#5c3a24",
+  leatherD: "#3a2416",
+  bronze: "#c4a36a",
+  copper: "#8a5a2b",
+  charcoal: "#2b2622",
+  stone: "#7a7264",
+  stoneL: "#b4aa96",
+  beige: "#cbb89a",
+  gas: "#e6c36a",
+  black: "#14110e",
+  coat: "#4a2f1c",
+  steel: "#6a6258",
+  brick: "#a05a42",
+  brickD: "#6b3a2a",
+  roof: "#3a2a20",
+  fog: "#8a93a0",
+  green: "#35503a",
 };
 
 function save(rel, pix) {
@@ -130,272 +123,267 @@ function block(pix, x, y, base, light, dark, accent) {
   pix.fill(x, y, 18, 18, base);
   pix.rect(x, y, 18, 18, dark);
   pix.fill(x + 1, y + 1, 16, 3, light);
-  pix.fill(x + 1, y + 1, 16, 1, accent || light);
-  pix.p(x + 3, y + 6, dark);
-  pix.p(x + 14, y + 6, dark);
-  pix.p(x + 3, y + 13, dark);
-  pix.p(x + 14, y + 13, dark);
-  pix.fill(x + 1, y + 16, 16, 1, dark);
+  if (accent) pix.fill(x + 1, y + 1, 16, 1, accent);
+  pix.p(x + 4, y + 7, dark);
+  pix.p(x + 13, y + 7, dark);
+  pix.p(x + 4, y + 13, dark);
+  pix.p(x + 13, y + 13, dark);
 }
 
 function makeTileset() {
   const pix = new Pix(16 * 18, 4 * 18);
-  const put = (index, draw) => {
-    const x = (index % 16) * 18;
-    const y = Math.floor(index / 16) * 18;
-    draw(x, y);
-  };
-
-  put(1, (x, y) => block(pix, x, y, C.steel, C.steelL, C.steelD, C.cyanD));
-  put(2, (x, y) => block(pix, x, y, C.steel, C.cyan, C.steelD, C.cyan));
-  put(3, (x, y) => {
-    block(pix, x, y, C.steelD, C.steel, C.bg, C.cyanD);
-    pix.fill(x + 6, y + 4, 6, 10, C.steel);
+  const put = (index, draw) => draw((index % 16) * 18, Math.floor(index / 16) * 18);
+  put(1, (x, y) => block(pix, x, y, C.brick, "#8a5340", C.brickD, C.copper));
+  put(2, (x, y) => block(pix, x, y, C.brick, C.beige, C.brickD, C.gas));
+  put(3, (x, y) => block(pix, x, y, C.stone, C.stoneL, C.charcoal, C.bronze));
+  put(4, (x, y) => block(pix, x, y, C.stone, C.bronze, C.charcoal, C.gas));
+  put(5, (x, y) => block(pix, x, y, "#5a5348", "#8d8476", "#2c2822", C.bronze));
+  put(6, (x, y) => {
+    pix.fill(x, y + 4, 18, 14, C.roof);
+    pix.fill(x, y + 2, 18, 3, C.copper);
+    pix.rect(x, y + 4, 18, 14, C.black);
   });
-  put(4, (x, y) => block(pix, x, y, C.rust, C.rustL, C.rustD, C.lamp));
-  put(5, (x, y) => block(pix, x, y, C.rustD, C.rust, C.bg, C.lamp));
-  put(6, (x, y) => block(pix, x, y, C.nexus, C.nexusL, C.shadow, C.mag));
-  put(7, (x, y) => block(pix, x, y, C.shadow, C.nexusL, C.bg, C.cyan));
-  put(8, (x, y) => {
-    pix.fill(x + 2, y + 3, 14, 13, C.rust);
-    pix.rect(x + 2, y + 3, 14, 13, C.rustD);
-    pix.fill(x + 3, y + 8, 12, 1, C.rustD);
-    pix.fill(x + 8, y + 4, 1, 11, C.rustD);
-    pix.rect(x + 4, y + 5, 3, 2, C.steelD);
-  });
+  put(7, (x, y) => pix.fill(x, y + 6, 18, 6, C.steel) || pix.rect(x, y + 6, 18, 6, C.charcoal));
+  put(8, (x, y) => pix.fill(x + 6, y, 6, 18, C.steel) || pix.rect(x + 6, y, 6, 18, C.charcoal));
   put(9, (x, y) => {
-    pix.fill(x + 5, y + 4, 8, 12, C.rustL);
-    pix.rect(x + 5, y + 4, 8, 12, C.rustD);
-    pix.fill(x + 6, y + 6, 6, 2, C.steelD);
-    pix.fill(x + 6, y + 12, 6, 2, C.steelD);
+    pix.fill(x + 2, y + 3, 14, 13, C.leather);
+    pix.rect(x + 2, y + 3, 14, 13, C.leatherD);
+    pix.fill(x + 3, y + 8, 12, 1, C.leatherD);
   });
   put(10, (x, y) => {
-    for (let i = 0; i < 3; i += 1) {
-      const sx = x + 2 + i * 5;
-      pix.fill(sx + 1, y + 8, 2, 8, C.steel);
-      pix.p(sx + 1, y + 7, C.red);
-      pix.p(sx + 2, y + 6, C.red);
-    }
+    pix.fill(x + 5, y + 4, 8, 12, C.copper);
+    pix.rect(x + 5, y + 4, 8, 12, C.leatherD);
+    pix.fill(x + 6, y + 6, 6, 2, C.bronze);
   });
   put(11, (x, y) => {
-    pix.fill(x + 6, y, 6, 18, C.cyan, 90);
-    pix.fill(x + 8, y, 2, 18, C.cyan, 180);
-    for (let i = 0; i < 5; i += 1) pix.fill(x + 4, y + 2 + i * 4, 10, 1, C.mag, 160);
+    pix.fill(x + 8, y + 2, 2, 10, C.steel);
+    pix.fill(x + 6, y + 1, 6, 5, C.gas);
+    pix.p(x + 8, y + 2, C.copper);
   });
   put(12, (x, y) => {
-    pix.fill(x + 7, y + 4, 4, 12, C.steel);
-    pix.fill(x + 5, y + 2, 8, 4, C.steelL);
-    pix.fill(x + 6, y + 3, 6, 2, C.muted ?? C.steelD);
+    pix.fill(x + 3, y + 2, 12, 14, C.beige);
+    pix.rect(x + 3, y + 2, 12, 14, C.copper);
+    pix.fill(x + 5, y + 4, 8, 2, C.brick);
+    pix.fill(x + 5, y + 8, 8, 1, C.charcoal);
   });
   put(13, (x, y) => {
-    pix.fill(x + 7, y + 4, 4, 12, C.steel);
-    pix.fill(x + 5, y + 2, 8, 4, C.cyan);
-    pix.fill(x + 6, y + 3, 6, 2, C.mag);
+    pix.fill(x + 4, y + 1, 10, 16, C.leatherD);
+    pix.rect(x + 4, y + 1, 10, 16, C.bronze);
+    pix.fill(x + 11, y + 9, 2, 2, C.gas);
   });
   put(14, (x, y) => {
-    pix.fill(x, y + 10, 18, 6, C.steel);
-    pix.fill(x, y + 10, 18, 1, C.cyan);
-    pix.rect(x, y + 10, 18, 6, C.steelD);
+    pix.fill(x + 3, y + 3, 12, 12, C.charcoal);
+    pix.rect(x + 3, y + 3, 12, 12, C.bronze);
+    pix.fill(x + 5, y + 5, 8, 8, C.gas, 90);
   });
   put(15, (x, y) => {
-    pix.fill(x, y + 10, 18, 6, C.rust);
-    pix.fill(x, y + 10, 18, 1, C.lamp);
+    pix.fill(x + 1, y + 8, 16, 8, C.leather);
+    pix.fill(x + 2, y + 4, 14, 5, C.beige);
+    pix.rect(x + 1, y + 4, 16, 12, C.leatherD);
   });
-  put(16, (x, y) => {
-    pix.fill(x + 3, y + 3, 12, 12, C.steelD);
-    pix.rect(x + 3, y + 3, 12, 12, C.steelL);
-    pix.fill(x + 5, y + 5, 8, 8, C.cyan, 140);
-    pix.fill(x + 8, y + 3, 1, 12, C.steelL);
-    pix.fill(x + 3, y + 8, 12, 1, C.steelL);
+  put(16, (x, y) => block(pix, x, y, "#4a5a48", "#7a8a70", "#243028", C.green));
+  put(17, (x, y) => {
+    pix.fill(x + 8, y + 8, 2, 10, C.leatherD);
+    pix.fill(x + 4, y + 2, 10, 9, C.green);
   });
-  put(17, (x, y) => pix.fill(x, y + 7, 18, 4, C.steelL) || pix.rect(x, y + 7, 18, 4, C.steelD));
-  put(18, (x, y) => pix.fill(x + 7, y, 4, 18, C.steelL) || pix.rect(x + 7, y, 4, 18, C.steelD));
+  put(18, (x, y) => {
+    pix.fill(x, y + 10, 18, 2, C.steel);
+    pix.fill(x + 2, y + 6, 2, 6, C.steel);
+    pix.fill(x + 8, y + 6, 2, 6, C.steel);
+    pix.fill(x + 14, y + 6, 2, 6, C.steel);
+  });
   put(19, (x, y) => {
-    pix.fill(x + 2, y + 4, 14, 12, C.steel);
-    pix.rect(x + 2, y + 4, 14, 12, C.steelD);
-    pix.fill(x + 4, y + 6, 4, 3, C.red);
-    pix.fill(x + 10, y + 6, 4, 3, C.cyan);
-    pix.fill(x + 4, y + 11, 10, 2, C.steelD);
+    pix.fill(x + 6, y + 8, 6, 8, C.steel);
+    pix.fill(x + 7, y + 2, 4, 8, C.beige, 140);
   });
   put(20, (x, y) => {
-    for (let i = 0; i < 6; i += 1) {
-      pix.fill(x + i * 3, y, 3, 18, i % 2 ? C.lamp : C.steelD);
-    }
+    pix.fill(x + 5, y + 4, 8, 6, C.black);
+    pix.p(x + 12, y + 6, C.bronze);
+    pix.fill(x + 4, y + 10, 10, 2, C.black);
   });
   put(21, (x, y) => {
-    pix.fill(x + 2, y + 2, 14, 14, C.steelD);
-    for (let i = 0; i < 4; i += 1) pix.fill(x + 4, y + 4 + i * 3, 10, 1, C.steel);
+    pix.fill(x + 2, y + 10, 14, 3, C.leather);
+    pix.fill(x + 3, y + 8, 12, 2, C.leatherD);
   });
   put(22, (x, y) => {
-    pix.fill(x + 5, y + 5, 8, 8, C.cyan);
-    pix.rect(x + 4, y + 4, 10, 10, C.mag);
-    pix.fill(x + 8, y + 8, 2, 2, C.bg);
+    pix.fill(x + 8, y + 2, 2, 14, C.steel);
+    pix.fill(x + 4, y + 3, 8, 6, "#6b1f1f");
   });
   put(23, (x, y) => {
-    pix.fill(x + 8, y + 3, 2, 8, C.steel);
-    pix.fill(x + 6, y + 2, 6, 4, C.lamp);
-    pix.p(x + 8, y + 3, C.red);
+    pix.fill(x + 4, y + 8, 10, 8, C.stone);
+    pix.fill(x + 7, y + 2, 4, 8, C.bronze);
   });
   put(24, (x, y) => {
-    pix.fill(x + 4, y + 1, 10, 16, C.steelD);
-    pix.rect(x + 4, y + 1, 10, 16, C.cyan);
-    pix.fill(x + 11, y + 8, 2, 2, C.mag);
+    pix.fill(x + 3, y + 5, 12, 11, C.steel);
+    pix.rect(x + 3, y + 5, 12, 11, C.charcoal);
+    pix.fill(x + 5, y + 7, 3, 3, C.gas);
+    pix.fill(x + 10, y + 7, 3, 3, C.copper);
+  });
+  put(25, (x, y) => {
+    pix.fill(x, y + 11, 18, 5, C.leather);
+    pix.fill(x, y + 11, 18, 1, C.bronze);
   });
   put(26, (x, y) => {
-    pix.fill(x, y, 18, 18, "#152033");
-    pix.rect(x, y, 18, 18, "#0d1522");
-    pix.fill(x + 2, y + 2, 14, 1, "#2a3b55");
+    pix.fill(x, y, 18, 18, "#2a221c");
+    pix.rect(x, y, 18, 18, "#1a1410");
+    pix.fill(x + 2, y + 2, 14, 1, "#3d3228");
+  });
+  put(27, (x, y) => {
+    pix.fill(x + 6, y + 2, 6, 14, C.brickD);
+    pix.fill(x + 5, y, 8, 4, C.stone);
+    pix.fill(x + 7, y + 1, 2, 2, C.fog, 120);
   });
   return pix;
 }
 
 function makePlayer() {
   const frames = 12;
-  const pix = new Pix(24 * frames, 24);
-  const body = (ox, bob = 0, arms = 0, kick = 0, hurt = false, dash = false) => {
-    const colors = {
-      o: "#0b1020",
-      1: "#1b2740",
-      2: "#8aa0b8",
-      3: C.visor,
-      4: C.mag,
-      5: "#e8d7c4",
-      6: C.cyan,
-      7: "#9bb4c8",
-    };
-    const map = [
-      "......oooooo......",
-      ".....o111111o.....",
-      "....o11333311o....",
-      "....o11333311o....",
-      ".....o111111o.....",
-      "....o11111111o....",
-      "...o1411111141o...",
-      "...o1111111111o...",
-      "....o11111111o....",
-      "....o11o..o11o....",
-      "....o11o..o11o....",
-      "....o77o..o77o....",
-    ];
-    pix.stamp(ox + 3, 5 + bob, map, colors);
-    if (hurt) pix.fill(ox + 8, 8, 8, 4, C.red, 180);
-    if (dash) pix.fill(ox + 1, 9, 7, 8, C.cyan, 110);
-    if (arms) pix.fill(ox + (arms > 0 ? 17 : 2), 12, 5, 2, C.cyan);
-    if (kick) pix.fill(ox + 15, 18, 3, 2, "#9bb4c8");
+  const pix = new Pix(32 * frames, 40);
+  const colors = {
+    o: "#1a1410",
+    c: "#8a5a2b",
+    d: "#5c3a24",
+    m: "#2b2118",
+    e: C.bronze,
+    a: "#d4c4a0",
+    p: "#e6d2b0",
+    g: C.gas,
+    r: "#5a1a1a",
   };
-  body(0 * 24, 0);
-  body(1 * 24, 1);
-  body(2 * 24, 0, 0, 1);
-  body(3 * 24, 1, 0, 0);
-  body(4 * 24, 0, 0, 1);
-  body(5 * 24, 1, 0, 0);
-  body(6 * 24, -1, 0, 1);
-  body(7 * 24, 1, 0, 1);
-  body(8 * 24, 0, 0, 0, true);
-  body(9 * 24, 0, 1, 0);
-  body(10 * 24, 0, 0, 0, false, true);
-  body(11 * 24, 0);
+  const body = [
+    "..........oooo..........",
+    ".........ommmmo.........",
+    "........omgeeemo........",
+    "........omgeeemo........",
+    ".........ommmmo.........",
+    "........occcccco........",
+    ".......occcccccco.......",
+    "......occccaacccco......",
+    "......occccaacccco......",
+    ".......occccccco........",
+    ".......odcc..ccdo.......",
+    ".......odcc..ccdo.......",
+    ".......oddd..dddo.......",
+  ];
+  const draw = (ox, bob, arm, hurt, shoot) => {
+    pix.stamp(ox + 4, 10 + bob, body, colors);
+    if (arm) pix.fill(ox + 22, 20, 6, 3, C.steel);
+    if (shoot) pix.fill(ox + 24, 18, 5, 2, C.bronze);
+    if (hurt) pix.fill(ox + 12, 14, 8, 4, "#7a1f1f", 150);
+    pix.p(ox + 20, 16, C.gas);
+  };
+  draw(0, 0, false, false, false);
+  draw(32, 1, false, false, false);
+  draw(64, 0, false, false, false);
+  draw(96, 1, true, false, false);
+  draw(128, 0, false, false, false);
+  draw(160, 1, true, false, false);
+  draw(192, -1, false, false, false);
+  draw(224, 1, false, false, false);
+  draw(256, 0, false, false, false);
+  draw(288, 0, true, false, false);
+  draw(320, 0, false, false, true);
+  draw(352, 0, false, true, false);
   return pix;
 }
 
-function makeDrone() {
-  const pix = new Pix(18 * 4, 18);
-  for (let f = 0; f < 4; f += 1) {
-    const x = f * 18;
-    const bob = f % 2;
-    pix.fill(x + 4, 5 + bob, 10, 8, C.steel);
-    pix.rect(x + 4, 5 + bob, 10, 8, C.steelD);
-    pix.fill(x + 7, 7 + bob, 4, 4, f > 1 ? C.mag : C.cyan);
-    pix.fill(x + 2, 8 + bob, 2, 2, C.steelL);
-    pix.fill(x + 14, 8 + bob, 2, 2, C.steelL);
-    pix.fill(x + 6, 13 + bob, 6, 1, C.cyan, 120);
+function makeNpc() {
+  const pix = new Pix(24 * 8, 32);
+  const palettes = [
+    { body: "#4a453c", head: "#cbb89a", accent: "#8a5a2b" },
+    { body: "#6b3a2a", head: "#cbb89a", accent: "#c4a36a" },
+    { body: "#2b2622", head: "#cbb89a", accent: "#6b1f1f" },
+    { body: "#35503a", head: "#e6d2b0", accent: "#c4a36a" },
+    { body: "#3a2416", head: "#cbb89a", accent: "#5c3a24" },
+    { body: "#cbb89a", head: "#e6d2b0", accent: "#c4a36a" },
+    { body: "#4a453c", head: "#cbb89a", accent: "#6a6258" },
+    { body: "#2b2118", head: "#cbb89a", accent: "#14110e" },
+  ];
+  palettes.forEach((pal, i) => {
+    const x = i * 24;
+    pix.fill(x + 8, 4, 8, 7, pal.head);
+    pix.fill(x + 6, 11, 12, 12, pal.body);
+    pix.fill(x + 7, 23, 4, 7, pal.accent);
+    pix.fill(x + 13, 23, 4, 7, pal.accent);
+    if (i === 2) pix.fill(x + 8, 6, 8, 2, "#6b1f1f");
+    if (i === 5) pix.fill(x + 5, 12, 14, 4, pal.accent);
+  });
+  return pix;
+}
+
+function makeLina() {
+  const pix = new Pix(40, 28);
+  for (let f = 0; f < 2; f += 1) {
+    const x = f * 20;
+    pix.fill(x + 7, 4 + f, 6, 6, "#e6d2b0");
+    pix.fill(x + 6, 10 + f, 8, 8, "#6b3a2a");
+    pix.fill(x + 6, 18 + f, 3, 6, "#3a2416");
+    pix.fill(x + 11, 18 + (1 - f), 3, 6, "#3a2416");
   }
   return pix;
 }
 
-function makeSentinel() {
-  const pix = new Pix(26 * 6, 24);
-  for (let f = 0; f < 6; f += 1) {
-    const x = f * 26;
-    const glow = f >= 2 ? (f >= 4 ? C.red : C.lamp) : C.cyanD;
-    pix.fill(x + 6, 6, 14, 14, C.steel);
-    pix.rect(x + 6, 6, 14, 14, C.steelD);
-    pix.fill(x + 9, 9, 8, 5, glow);
-    pix.fill(x + 8, 16, 10, 3, C.steelD);
-    pix.fill(x + 4, 12, 3, 4, C.steelL);
-    pix.fill(x + 19, 12, 3, 4, C.steelL);
-    if (f >= 4) pix.fill(x + 1, 11, 5, 3, C.red, 180);
-  }
-  return pix;
-}
-
-function makeSlash() {
-  const pix = new Pix(24 * 3, 16);
-  for (let f = 0; f < 3; f += 1) {
-    const x = f * 24;
-    pix.fill(x + 4 + f * 2, 4, 12 - f, 8, C.cyan, 160 - f * 30);
-    pix.fill(x + 6 + f * 2, 6, 10 - f, 4, C.mag, 140);
-  }
+function makeCarriage() {
+  const pix = new Pix(48, 28);
+  pix.fill(6, 8, 36, 12, "#3a2416");
+  pix.rect(6, 8, 36, 12, "#1a1410");
+  pix.fill(28, 4, 12, 8, "#5c3a24");
+  pix.fill(2, 12, 8, 6, "#6a6258");
+  pix.fill(10, 20, 6, 6, "#2b2622");
+  pix.fill(30, 20, 6, 6, "#2b2622");
+  pix.fill(16, 10, 6, 4, "#e6c36a", 160);
   return pix;
 }
 
 function makeBg(kind) {
-  const pix = new Pix(240, 135);
-  pix.fill(0, 0, 240, 135, kind === "far" ? "#08101c" : kind === "mid" ? "#0c1626" : "#122033");
+  const pix = new Pix(320, 180);
+  pix.fill(0, 0, 320, 180, kind === "far" ? "#4a3a2c" : kind === "mid" ? "#3d2f24" : "#32261c");
   if (kind === "far") {
-    for (let i = 0; i < 50; i += 1) pix.p(8 + (i * 19) % 232, 6 + (i * 13) % 48, C.cyan, 140);
-    pix.fill(0, 78, 240, 57, "#10192b");
-    for (let i = 0; i < 10; i += 1) {
+    pix.fill(0, 0, 320, 70, "#6a5340");
+    for (let i = 0; i < 14; i += 1) {
       const x = i * 24;
-      const h = 24 + (i % 5) * 8;
-      pix.fill(x + 4, 78 - h, 18, h, "#1a2740");
-      pix.fill(x + 8, 78 - h + 5, 3, 3, i % 2 ? C.mag : C.cyan, 200);
-      pix.fill(x + 13, 78 - h + 12, 3, 3, C.lamp, 160);
+      const h = 30 + (i % 5) * 12;
+      pix.fill(x + 4, 90 - h, 18, h, "#1a1410");
+      pix.fill(x + 8, 90 - h - 16, 6, 16, "#2b2118");
+      if (i % 2 === 0) pix.fill(x + 9, 90 - h + 8, 3, 3, C.gas, 160);
     }
-    pix.fill(0, 78, 240, 2, "#2de2e655");
+    pix.fill(0, 90, 320, 90, "#2b241c");
   }
   if (kind === "mid") {
-    for (let i = 0; i < 7; i += 1) {
-      pix.fill(i * 36 + 4, 28, 26, 107, "#22324d");
-      pix.rect(i * 36 + 4, 28, 26, 107, "#0b1220");
-      pix.fill(i * 36 + 8, 36, 6, 7, C.cyan, 180);
-      pix.fill(i * 36 + 18, 50, 6, 7, C.lamp, 160);
-      pix.fill(i * 36 + 8, 66, 6, 7, C.mag, 140);
+    for (let i = 0; i < 8; i += 1) {
+      pix.fill(i * 42 + 6, 40, 28, 140, "#3a2a20");
+      pix.rect(i * 42 + 6, 40, 28, 140, "#1a1410");
+      pix.fill(i * 42 + 10, 50, 6, 7, C.gas, 120);
+      pix.fill(i * 42 + 20, 68, 6, 7, C.gas, 80);
     }
   }
   if (kind === "near") {
-    pix.fill(0, 100, 240, 35, "#1b283d");
-    for (let i = 0; i < 14; i += 1) pix.fill(i * 18, 90, 10, 16, "#26344d");
-    pix.fill(0, 118, 240, 2, C.cyan, 140);
-    pix.fill(0, 120, 240, 1, C.mag, 80);
+    pix.fill(0, 140, 320, 40, "#2b2118");
+    for (let i = 0; i < 16; i += 1) pix.fill(i * 20, 128, 8, 16, "#3a2a20");
+    pix.fill(0, 168, 320, 2, C.bronze, 100);
   }
   return pix;
 }
 
-function makeHeart() {
-  const pix = new Pix(12, 12);
-  pix.fill(2, 3, 3, 3, C.red);
-  pix.fill(7, 3, 3, 3, C.red);
-  pix.fill(3, 5, 6, 5, C.red);
-  pix.p(5, 4, C.mag);
+function makeSteam() {
+  const pix = new Pix(8, 8);
+  pix.fill(2, 2, 4, 4, C.beige, 140);
+  pix.p(3, 1, C.beige, 80);
+  pix.p(4, 6, C.beige, 80);
   return pix;
 }
 
-function makeDash() {
-  const pix = new Pix(12, 12);
-  pix.fill(1, 5, 10, 2, C.cyan);
-  pix.fill(7, 3, 4, 6, C.mag);
+function makeCrow() {
+  const pix = new Pix(16, 16);
+  pix.fill(3, 7, 10, 5, C.black);
+  pix.fill(8, 4, 5, 5, C.black);
+  pix.fill(12, 6, 3, 2, C.copper);
+  pix.p(10, 6, C.bronze);
   return pix;
 }
 
 save("assets/tilesets/tileset.png", makeTileset());
-save("assets/characters/player.png", makePlayer());
-save("assets/enemies/drone.png", makeDrone());
-save("assets/enemies/sentinel.png", makeSentinel());
-save("assets/fx/slash.png", makeSlash());
-save("assets/backgrounds/bg-far.png", makeBg("far"));
-save("assets/backgrounds/bg-mid.png", makeBg("mid"));
-save("assets/backgrounds/bg-near.png", makeBg("near"));
-save("assets/ui/heart.png", makeHeart());
-save("assets/ui/dash-icon.png", makeDash());
-console.log("assets gerados em public/assets");
+save("assets/characters/lina.png", makeLina());
+save("assets/characters/carriage.png", makeCarriage());
+save("assets/ui/crow.png", makeCrow());
+console.log("tileset e props auxiliares gerados — personagens e rua pintada vêm de scripts/process-painted-art.py");

@@ -28,7 +28,3 @@ export function tickDash(
     airUsed: state.onGround ? false : state.airUsed,
   };
 }
-
-export function canPassBarrier(hasDash: boolean, isDashing: boolean): boolean {
-  return hasDash && isDashing;
-}

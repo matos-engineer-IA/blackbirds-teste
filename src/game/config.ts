@@ -9,6 +9,7 @@ export const buildProfile = {
   server: "nginx",
   physics: "arcade",
   output: "dist",
-  sceneCount: 4,
+  sceneCount: 6,
   port: 8080,
+  title: "Black Bird: Revolução",
 } as const;
