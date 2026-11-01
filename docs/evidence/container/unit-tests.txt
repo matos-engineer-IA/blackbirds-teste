@@ -1,0 +1,24 @@
+
+> black-bird-revolucao@1.0.0 test
+> vitest run
+
+
+ RUN  v3.2.4 /home/matheus/blackbirds-teste
+
+ ✓ tests/painted-art.test.ts (1 test) 5ms
+ ✓ tests/boss-attacks.test.ts (1 test) 7ms
+ ✓ tests/progress.test.ts (2 tests) 4ms
+ ✓ tests/action-timeline.test.ts (3 tests) 4ms
+ ✓ tests/health-file.test.ts (2 tests) 29ms
+ ✓ tests/city.test.ts (3 tests) 10ms
+ ✓ tests/rooms.test.ts (3 tests) 28ms
+ ✓ tests/config.test.ts (3 tests) 4ms
+ ✓ tests/dash.test.ts (2 tests) 3ms
+ ✓ tests/scenes.test.ts (3 tests) 5ms
+ ✓ tests/movement.test.ts (2 tests) 11ms
+ ✓ tests/combat.test.ts (2 tests) 11ms
+
+ Test Files  12 passed (12)
+      Tests  27 passed (27)
+   Start at  15:46:50
+   Duration  906ms (transform 531ms, setup 0ms, collect 955ms, tests 121ms, environment 3ms, prepare 1.27s)

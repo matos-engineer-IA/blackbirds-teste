@@ -1,0 +1,23 @@
+{
+  "date": "2026-11-01T15:50:24.060Z",
+  "image": "sha256:bdc4260e4bdcde891f530a08a55a0f512f8ca8a994be469f580d30a3dfdc356e",
+  "container": "black-bird-codex-final-20261101",
+  "binding": "127.0.0.1:4185 -> 8080",
+  "health": 200,
+  "missingAsset": 404,
+  "bundle": "assets/index-DMbcotKe.js",
+  "bundleSha256": "58b7049c0246b782e82881d56fbff29a25821e90647455f568e970d4d9cc583a",
+  "matchesLocalBuild": true,
+  "browserErrors": [],
+  "performance": {
+    "sampleSeconds": 5,
+    "frames": 301,
+    "p50Ms": 16.699999999999818,
+    "p95Ms": 16.700000000000728,
+    "p99Ms": 16.800000000000182,
+    "children": 372,
+    "textureKeys": 25,
+    "limitation": "Headless software rendering, warm-up 2s; frame intervals only, not GPU/CPU budget or desktop guarantee."
+  },
+  "hml": "não executada"
+}

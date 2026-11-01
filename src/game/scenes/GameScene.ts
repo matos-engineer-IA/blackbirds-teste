@@ -15,7 +15,7 @@ import {
   type DialogueState,
 } from "../systems/dialogue";
 import { shouldPlayCrash, startCutscene, tickCutscene, type CutsceneState } from "../systems/cutscene";
-import { enterRoom, endPrologue, markTalk, type RunSnapshot } from "../systems/runState";
+import { createRun, enterRoom, endPrologue, markTalk, type RunSnapshot } from "../systems/runState";
 import { WeatherSystem } from "../systems/weather";
 import { LightingRig } from "../systems/lighting";
 import { CameraRig } from "../systems/cameraRig";
@@ -46,6 +46,11 @@ export class GameScene extends Phaser.Scene {
   private interactWasDown = false;
   private pauseWasDown = false;
   private debugOn = false;
+  private modeBeforePause: PlayMode = "EXPLORING";
+  private lastPlayerX = CITY_SPAWN_X;
+  private pendingJump = false;
+  private pendingInteract = false;
+  private pendingPause = false;
 
   constructor() {
     super(SCENE.game);
@@ -57,6 +62,17 @@ export class GameScene extends Phaser.Scene {
     this.cutscene = undefined;
     this.dialogue = closedDialogue();
     this.mode = "EXPLORING";
+    this.speaker = undefined;
+    this.lina = undefined;
+    this.killer = undefined;
+    this.blackout = undefined;
+    this.jumpWasDown = false;
+    this.interactWasDown = true; // Enter from the menu must not open a conversation.
+    this.pauseWasDown = false;
+    this.pendingJump = this.pendingInteract = this.pendingPause = false;
+    this.lastPlayerX = CITY_SPAWN_X;
+    this.debugGfx = undefined;
+    this.setRun(createRun());
     this.world = new RoomWorld(this);
     this.weather = new WeatherSystem(this);
     this.lighting = new LightingRig(this);
@@ -73,6 +89,14 @@ export class GameScene extends Phaser.Scene {
       ENTER: "ENTER",
       F1: "F1",
     }) as Record<string, Phaser.Input.Keyboard.Key>;
+    const onAction = (event: KeyboardEvent) => {
+      if (event.repeat) return;
+      if (["ArrowUp", "KeyW", "Space"].includes(event.code)) this.pendingJump = true;
+      if (["KeyE", "Enter"].includes(event.code)) this.pendingInteract = true;
+      if (event.code === "Escape") this.pendingPause = true;
+    };
+    this.input.keyboard!.on("keydown", onAction);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.input.keyboard?.off("keydown", onAction));
 
     this.player = new Player(this, CITY_SPAWN_X, CITY_GROUND_Y);
     this.player.combatEnabled = false;
@@ -95,6 +119,16 @@ export class GameScene extends Phaser.Scene {
     if (this.debugOn) this.drawDebug();
     this.setRun(enterRoom(this.run(), "operario"));
     this.weather.apply("clear");
+    const onBlur = () => {
+      this.input.keyboard?.resetKeys();
+      this.pausePlay();
+    };
+    this.game.events.on(Phaser.Core.Events.BLUR, onBlur);
+    this.game.events.on(Phaser.Core.Events.HIDDEN, onBlur);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.game.events.off(Phaser.Core.Events.BLUR, onBlur);
+      this.game.events.off(Phaser.Core.Events.HIDDEN, onBlur);
+    });
     this.events.emit("hud", this.hudPayload());
   }
 
@@ -102,10 +136,8 @@ export class GameScene extends Phaser.Scene {
     if (!this.player?.active) return;
     if (Phaser.Input.Keyboard.JustDown(this.keys.F1)) this.toggleDebug();
     const pauseDown = this.keys.ESC.isDown;
-    if (pauseDown && !this.pauseWasDown && !this.ended && this.mode !== "CUTSCENE") {
-      this.mode = this.mode === "PAUSED" ? "EXPLORING" : "PAUSED";
-      this.events.emit(this.mode === "PAUSED" ? "pause" : "unpause");
-    }
+    if ((this.pendingPause || (pauseDown && !this.pauseWasDown)) && !this.ended) this.pausePlay();
+    this.pendingPause = false;
     this.pauseWasDown = pauseDown;
     if (this.mode === "PAUSED" || this.ended) return;
 
@@ -117,15 +149,19 @@ export class GameScene extends Phaser.Scene {
 
     const interactDown = this.keys.E.isDown || this.keys.ENTER.isDown;
     if (this.mode === "DIALOGUE") {
+      if (this.speaker && !this.speaker.active) this.endDialogue();
       this.player.updatePlayer({
         left: false, right: false, jump: false, jumpPressed: false, melee: false, fire: false, reload: false,
       }, delta);
-      this.speaker?.setVelocity(0, 0);
-      if (interactDown && !this.interactWasDown) {
+      this.speaker?.setVelocityX(0);
+      this.jumpWasDown = this.cursors.up.isDown || this.keys.W.isDown || this.keys.SPACE.isDown;
+      this.pendingJump = false;
+      if (this.pendingInteract || (interactDown && !this.interactWasDown)) {
         this.dialogue = advanceDialogue(this.dialogue);
         sfx.talk();
         if (!this.dialogue.open) this.endDialogue();
       }
+      this.pendingInteract = false;
       this.interactWasDown = interactDown;
       this.events.emit("dialogue", currentLine(this.dialogue));
       this.events.emit("hud", this.hudPayload());
@@ -138,7 +174,7 @@ export class GameScene extends Phaser.Scene {
         left: canMove(this.mode) && (this.cursors.left.isDown || this.keys.A.isDown),
         right: canMove(this.mode) && (this.cursors.right.isDown || this.keys.D.isDown),
         jump: canMove(this.mode) && jumpDown,
-        jumpPressed: canMove(this.mode) && jumpDown && !this.jumpWasDown,
+        jumpPressed: canMove(this.mode) && (this.pendingJump || (jumpDown && !this.jumpWasDown)),
         melee: false,
         fire: false,
         reload: false,
@@ -146,19 +182,28 @@ export class GameScene extends Phaser.Scene {
       delta,
     );
     this.jumpWasDown = jumpDown;
+    this.pendingJump = false;
     this.world.updateMoving();
-    if (this.world.cart) this.physics.collide(this.player, this.world.cart);
+    // The avenue carriage travels behind the pedestrian plane; it is scenery,
+    // not an invisible moving gate on the only route back to the neighbourhood.
     this.weather.follow(this.cameras.main.scrollX);
     this.far.tilePositionX = this.cameras.main.scrollX * 0.05;
     this.mid.tilePositionX = this.cameras.main.scrollX * 0.16;
-    this.cam.look(this.player.facing);
+    this.cam.look(this.player.facing, delta);
     this.puffVents();
     this.syncRegion();
+    const moved = Math.abs(this.player.x - this.lastPlayerX);
+    if (moved > 0.05 && this.mode === "EXPLORING") {
+      const run = this.run();
+      this.setRun({ ...run, activeWalkMs: run.activeWalkMs + Math.min(delta, 50), walkDistance: run.walkDistance + moved });
+    }
+    this.lastPlayerX = this.player.x;
     if (this.debugOn) this.drawDebug();
 
-    if (interactDown && !this.interactWasDown && canInteract(this.mode)) this.tryInteract();
+    if ((this.pendingInteract || (interactDown && !this.interactWasDown)) && canInteract(this.mode)) this.tryInteract();
+    this.pendingInteract = false;
     this.interactWasDown = interactDown;
-    this.events.emit("dialogue", undefined);
+    this.events.emit("dialogue", currentLine(this.dialogue));
     this.events.emit("hud", this.hudPayload());
   }
 
@@ -168,11 +213,30 @@ export class GameScene extends Phaser.Scene {
   }
 
   replay(): void {
+    this.events.emit("unpause");
+    this.scene.stop(SCENE.ui);
     this.scene.restart();
+    this.scene.launch(SCENE.ui);
   }
 
   resumePlay(): void {
-    this.mode = "EXPLORING";
+    if (this.mode !== "PAUSED") return;
+    this.input.keyboard?.resetKeys();
+    this.jumpWasDown = false;
+    this.interactWasDown = true;
+    this.pauseWasDown = false;
+    this.pendingJump = this.pendingInteract = this.pendingPause = false;
+    this.mode = this.modeBeforePause;
+    this.scene.resume();
+    this.events.emit("unpause");
+  }
+
+  pausePlay(): void {
+    if (this.mode === "PAUSED" || this.ended) return;
+    this.modeBeforePause = this.mode;
+    this.mode = "PAUSED";
+    this.scene.pause();
+    this.events.emit("pause");
   }
 
   private syncRegion(): void {
@@ -184,14 +248,16 @@ export class GameScene extends Phaser.Scene {
   }
 
   private tryInteract(): void {
+    // Conversations start on a valid contact, never freeze Nero in midair.
+    if (!this.player.onGround) return;
     const npc = this.world.nearestNpc(this.player.x, this.player.y);
     if (npc) {
       this.speaker = npc;
       npc.setBusy(true);
       npc.face(this.player.x);
-      this.world.freezeNpcs(npc);
       this.dialogue = openDialogue(npc.dialogueId);
       this.mode = "DIALOGUE";
+      this.player.locked = true;
       this.player.setVelocityX(0);
       this.setRun(markTalk(this.run(), npc.npcId));
       sfx.talk();
@@ -204,6 +270,7 @@ export class GameScene extends Phaser.Scene {
       const region = segmentAt(this.player.x).id;
       this.dialogue = openDialogue(region === "escola" ? "porteiro" : region === "operario" ? "porta-casa" : "porta-loja");
       this.mode = "DIALOGUE";
+      this.player.locked = true;
       this.player.setVelocityX(0);
       sfx.door();
       this.events.emit("dialogue", currentLine(this.dialogue));
@@ -212,6 +279,8 @@ export class GameScene extends Phaser.Scene {
     if (item.kind === "lever") {
       this.dialogue = openDialogue("alavanca");
       this.mode = "DIALOGUE";
+      this.player.locked = true;
+      this.player.setVelocityX(0);
       sfx.steam();
       this.events.emit("dialogue", currentLine(this.dialogue));
       return;
@@ -220,7 +289,11 @@ export class GameScene extends Phaser.Scene {
   }
 
   private endDialogue(): void {
+    this.dialogue = closedDialogue();
     this.mode = "EXPLORING";
+    this.player.locked = false;
+    this.player.jumpBufferMs = 0;
+    this.speaker?.setBusy(false);
     this.speaker = undefined;
     this.world.releaseNpcs();
   }
@@ -230,14 +303,15 @@ export class GameScene extends Phaser.Scene {
     this.mode = "CUTSCENE";
     this.cutscene = startCutscene();
     this.player.locked = true;
+    this.player.setVelocityX(0);
+    this.player.anims.play("player-idle", true);
     this.player.setFlipX(false);
     const school = this.world.nearestInteractive(this.player.x, this.player.y);
     const startX = (school?.x ?? this.player.x) + 90;
-    this.lina = this.add.sprite(startX, this.player.y, "lina", 0).setDepth(9);
+    this.lina = this.add.sprite(startX, this.player.y, "lina", 0).setOrigin(0.5, 1).setScale(1.6).setDepth(9);
     this.lina.play("lina-run");
-    this.killer = this.add.image(startX + 220, this.player.y + 4, "carriage").setDepth(10);
-    this.cameras.main.stopFollow();
-    this.cameras.main.pan(this.player.x + 40, this.player.y - 10, 600);
+    this.killer = this.add.image(startX + 220, this.player.y, "carriage").setOrigin(0.5, 1).setScale(1.6).setDepth(10).setVisible(false);
+    this.cam.cinematic(this.player.x + 100, this.player.y - 100);
     sfx.bell();
   }
 
@@ -246,19 +320,20 @@ export class GameScene extends Phaser.Scene {
     const previous = this.cutscene.phase;
     this.cutscene = tickCutscene(this.cutscene, delta);
     if (shouldPlayCrash(previous, this.cutscene.phase)) {
-      this.blackout = this.add.rectangle(this.cameras.main.scrollX + 320, this.cameras.main.scrollY + 180, 800, 500, 0x000000, 1).setScrollFactor(1).setDepth(40);
-      sfx.crash();
+      this.blackout = this.add.rectangle(320, 180, 640, 360, 0x000000, 1).setScrollFactor(0).setDepth(40);
+      // Render at least one black frame before the audible accident.
+      this.time.delayedCall(100, () => sfx.crash());
       this.lina?.setVisible(false);
       this.killer?.setVisible(false);
     }
-    if (this.cutscene.phase === "approach") this.player.x += 0.15;
     if (this.cutscene.phase === "daughter" && this.lina) {
-      this.lina.x -= 1.15;
+      this.lina.x -= 38 * delta / 1000;
       this.player.setFlipX(false);
     }
     if (this.cutscene.phase === "vehicle" && this.killer && this.lina) {
-      this.killer.x -= 3.4;
-      this.lina.x -= 1.05;
+      this.killer.setVisible(true);
+      this.killer.x -= 190 * delta / 1000;
+      this.lina.x -= 32 * delta / 1000;
     }
     if (this.cutscene.phase === "title") {
       this.blackout?.setAlpha(1);

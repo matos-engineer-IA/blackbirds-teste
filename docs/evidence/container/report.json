@@ -1,0 +1,123 @@
+{
+  "date": "2026-11-01T15:46:58.335Z",
+  "baseCommit": "faeb5d5145071efd9c5e4d7a26affda05e9c62c0",
+  "workingTree": " package-lock.json                 |  63 ++++++++++++++++++-\n package.json                      |   8 ++-\n scripts/process-painted-art.py    |   2 +-\n scripts/slice-nero.py             |   7 ++-\n src/game/entities/Dummy.ts        |   4 +-\n src/game/entities/Npc.ts          |  19 ++++--\n src/game/entities/Player.ts       |  64 +++++++++++++++-----\n src/game/entities/Projectile.ts   |   4 +-\n src/game/entities/Winsth.ts       |  47 ++++++++++-----\n src/game/levels/RoomWorld.ts      |  14 +++--\n src/game/scenes/ArenaScene.ts     |   8 ++-\n src/game/scenes/BootScene.ts      |  12 ++--\n src/game/scenes/BossArenaScene.ts |  76 +++++++++++++++++------\n src/game/scenes/GameScene.ts      | 123 ++++++++++++++++++++++++++++++--------\n src/game/scenes/MenuScene.ts      |   3 +-\n src/game/scenes/UIScene.ts        |  46 ++++++++++----\n src/game/systems/cameraRig.ts     |  18 ++++--\n src/game/systems/runState.ts      |   4 ++\n src/game/systems/weather.ts       |  12 ++--\n src/game/utils/footAnchor.ts      |  20 +++++--\n src/game/utils/scale.ts           |   7 ++-\n 21 files changed, 433 insertions(+), 128 deletions(-)\n",
+  "browser": "156.0.8078.47",
+  "url": "http://127.0.0.1:4185/",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "results": [
+    {
+      "id": "PHY-01",
+      "status": "passou",
+      "durationMs": 30023,
+      "observed": {
+        "beforeY": 318,
+        "afterY": 318,
+        "bottom": 318,
+        "seconds": 30
+      }
+    },
+    {
+      "id": "PAUSE-MOVEMENT",
+      "status": "passou",
+      "durationMs": 2181,
+      "observed": {
+        "beforeX": 265.2766166666671,
+        "afterX": 265.2766166666671,
+        "npcsFrozen": true
+      }
+    },
+    {
+      "id": "INP-01/02/03/09",
+      "status": "passou",
+      "durationMs": 4518,
+      "observed": {
+        "speaker": "vizinha",
+        "playerStopped": true,
+        "npcStopped": true,
+        "pauseRestoredDialogue": true
+      }
+    },
+    {
+      "id": "INP-04/10",
+      "status": "passou",
+      "durationMs": 12612,
+      "observed": {
+        "cycles": 10,
+        "dialogueListeners": 1,
+        "removedSpeakerRecovered": true
+      }
+    },
+    {
+      "id": "PHY-05",
+      "status": "passou",
+      "durationMs": 2422,
+      "observed": {
+        "short": 26.476888888888766,
+        "held": 52.83333333333326
+      }
+    },
+    {
+      "id": "CAM-01/02/03/05/10; PHY-02; NAR-03",
+      "status": "passou",
+      "durationMs": 111787,
+      "observed": {
+        "farX": 7872,
+        "farCamera": 7244,
+        "returnedX": 12,
+        "activeWalkSeconds": 111.46220999999926,
+        "outboundActiveSeconds": 55.264479999998585,
+        "distance": 15555.999999999676
+      }
+    },
+    {
+      "id": "CAM-06 / UX-08",
+      "status": "passou",
+      "durationMs": 451,
+      "observed": {
+        "viewport": "900x700",
+        "floor": 318
+      }
+    },
+    {
+      "id": "INP-06 / INP-09 focus",
+      "status": "passou",
+      "durationMs": 1368,
+      "observed": {
+        "syntheticDomBlur": true,
+        "inputRecovered": true
+      }
+    },
+    {
+      "id": "RESET / REL-08",
+      "status": "passou",
+      "durationMs": 2549,
+      "observed": {
+        "restarts": 3,
+        "dialogueListeners": 1,
+        "runReset": true
+      }
+    },
+    {
+      "id": "NAR-04/05/09",
+      "status": "passou",
+      "durationMs": 8799,
+      "observed": {
+        "fixture": true,
+        "pausedTimelineFrozen": true,
+        "blackCutCaptured": true,
+        "noBossAfterStory": true
+      }
+    }
+  ],
+  "errors": [],
+  "limitations": [
+    "Chromium headless, renderização por software; não equivale a playtest humano.",
+    "Não valida aprovação artística, Docker ou HML."
+  ],
+  "artifactScript": "./assets/index-DMbcotKe.js",
+  "video": "docs/evidence/container/regression.webm"
+}

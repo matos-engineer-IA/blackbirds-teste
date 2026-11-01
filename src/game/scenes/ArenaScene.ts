@@ -6,6 +6,7 @@ import { palette } from "../palette";
 import { unlockAudio } from "../utils/audio";
 import { GAME, SCENE } from "../utils/constants";
 import { GROUND } from "../utils/scale";
+import { bodyBounds } from "../utils/footAnchor";
 
 export class ArenaScene extends Phaser.Scene {
   private player!: Player;
@@ -23,6 +24,7 @@ export class ArenaScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.jumpWasDown = this.meleeWasDown = this.fireWasDown = false;
     unlockAudio();
     this.add.tileSprite(GAME.width / 2, 140, GAME.width, 250, "bg-mid");
     this.add.text(16, 12, "Campo de provas", {
@@ -88,16 +90,16 @@ export class ArenaScene extends Phaser.Scene {
       delta,
     );
     if (this.player.ammo < ammoBefore) {
-      this.shots.add(new Projectile(this, this.player.x + this.player.facing * 16, this.player.y, this.player.facing));
+      new Projectile(this, this.player.x + this.player.facing * 22, this.player.y - 44, this.player.facing, this.shots);
     }
     this.jumpWasDown = jumpDown;
     this.meleeWasDown = meleeDown;
     this.fireWasDown = fireDown;
-    if (this.player.attacking && this.player.anims.currentAnim?.key === "player-melee") {
+    if (this.player.meleeActive) {
       const box = this.player.attackHitbox();
       this.dummies.getChildren().forEach((child) => {
         const dummy = child as Dummy;
-        if (dummy.active && Phaser.Geom.Intersects.RectangleToRectangle(box, dummy.getBounds())) {
+        if (dummy.active && Phaser.Geom.Intersects.RectangleToRectangle(box, bodyBounds(dummy)) && this.player.consumeMeleeHit(dummy)) {
           dummy.hit(this.player.lastMeleeDamage());
         }
       });

@@ -12,12 +12,14 @@ export class Dummy extends Phaser.Physics.Arcade.Sprite {
     this.setDepth(7);
     this.setOrigin(0.5, 1);
     const body = this.body as Phaser.Physics.Arcade.Body;
-    body.setImmovable(true);
+    body.setImmovable(false);
+    this.setPushable(false);
     body.setSize(18, 52);
     body.setOffset(17, 36);
   }
 
   hit(damage: number): boolean {
+    if (this.hp <= 0) return false;
     this.hp = applyDamage(this.hp, damage, false);
     this.setTint(0xffffff);
     this.scene.tweens.add({

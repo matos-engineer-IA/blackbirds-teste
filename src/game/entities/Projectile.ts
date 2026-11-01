@@ -1,10 +1,12 @@
 import Phaser from "phaser";
 
 export class Projectile extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene: Phaser.Scene, x: number, y: number, dir: -1 | 1) {
+  constructor(scene: Phaser.Scene, x: number, y: number, dir: -1 | 1, group: Phaser.Physics.Arcade.Group) {
     super(scene, x, y, "steam");
     scene.add.existing(this);
     scene.physics.add.existing(this);
+    // Group defaults reset body velocity/gravity; configure the shot afterwards.
+    group.add(this);
     this.setDepth(9);
     this.setTint(0xe6c36a);
     this.setScale(0.6);

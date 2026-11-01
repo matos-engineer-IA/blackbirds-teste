@@ -31,10 +31,11 @@ BG_LUMA = 18
 def load_sheet() -> Image.Image:
     ART.mkdir(parents=True, exist_ok=True)
     matches = sorted(SRC_DIR.glob("*Pistoleiro*"))
-    if not matches:
-        raise SystemExit("spritesheet de Nero nao encontrado nos anexos")
     dest = ART / "nero-sheet.jpg"
-    shutil.copy2(matches[0], dest)
+    if not dest.exists() and matches:
+        shutil.copy2(matches[0], dest)
+    if not dest.exists():
+        raise SystemExit("fonte ausente: art/source/nero-sheet.jpg (nenhum cache externo exigido)")
     return Image.open(dest).convert("RGBA")
 
 

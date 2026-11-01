@@ -7,13 +7,25 @@ export function anchorFeet(
   frameH: number,
   bodyW: number,
   bodyH: number,
+  renderScale = 1,
+  footY = frameH,
 ): void {
-  sprite.setOrigin(0.5, 1);
+  sprite.setScale(renderScale).setOrigin(0.5, footY / frameH);
   const body = sprite.body as Phaser.Physics.Arcade.Body;
-  body.setSize(bodyW, bodyH);
-  body.setOffset(Math.round((frameW - bodyW) / 2), frameH - bodyH);
+  // Arcade's size/offset are source pixels; callers specify world units.
+  body.setSize(bodyW / renderScale, bodyH / renderScale, false);
+  body.setOffset((frameW - bodyW / renderScale) / 2, footY - bodyH / renderScale);
+  body.updateFromGameObject();
 }
 
 export function addContactShadow(scene: Phaser.Scene, sprite: Phaser.GameObjects.Sprite): Phaser.GameObjects.Image {
-  return scene.add.image(sprite.x, sprite.y - 2, "contact-shadow").setDepth(sprite.depth - 1).setAlpha(0.55);
+  const shadow = scene.add.image(sprite.x, sprite.y + 1, "contact-shadow").setDepth(sprite.depth - 1).setAlpha(0.55).setScale(0.65);
+  sprite.once(Phaser.GameObjects.Events.DESTROY, () => shadow.destroy());
+  return shadow;
+}
+
+/** Physical contact/hurt region; excludes transparent margins, hats and weapons. */
+export function bodyBounds(sprite: Phaser.Physics.Arcade.Sprite): Phaser.Geom.Rectangle {
+  const body = sprite.body as Phaser.Physics.Arcade.Body;
+  return new Phaser.Geom.Rectangle(body.x, body.y, body.width, body.height);
 }

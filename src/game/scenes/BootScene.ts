@@ -27,7 +27,7 @@ export class BootScene extends Phaser.Scene {
     this.load.image("bg-far", "assets/backgrounds/bg-far.png");
     this.load.image("bg-mid", "assets/backgrounds/bg-mid.png");
     this.load.image("bg-near", "assets/backgrounds/bg-near.png");
-    this.load.image("cobble", "assets/tilesets/cobble.png");
+    this.load.image("cobble", "assets/tilesets/cobble-review-v2.png");
     this.load.image("steam", "assets/fx/steam.png");
     this.load.image("spark", "assets/fx/spark.png");
     this.load.image("contact-shadow", "assets/fx/contact-shadow.png");
@@ -46,8 +46,8 @@ export class BootScene extends Phaser.Scene {
 
   create(): void {
     this.anims.create({ key: "player-idle", frames: this.anims.generateFrameNumbers("nero", { start: 0, end: 1 }), frameRate: 3, repeat: -1 });
-    this.anims.create({ key: "player-run", frames: this.anims.generateFrameNumbers("nero", { start: 2, end: 5 }), frameRate: 8, repeat: -1 });
-    this.anims.create({ key: "player-jump", frames: [{ key: "nero", frame: 6 }] });
+    this.anims.create({ key: "player-run", frames: this.anims.generateFrameNumbers("nero", { start: 2, end: 4 }), frameRate: 8, repeat: -1 });
+    this.anims.create({ key: "player-jump", frames: [{ key: "nero", frame: 5 }] });
     this.anims.create({ key: "player-fall", frames: [{ key: "nero", frame: 6 }] });
     this.anims.create({ key: "player-land", frames: [{ key: "nero", frame: 0 }] });
     this.anims.create({ key: "player-melee", frames: this.anims.generateFrameNumbers("nero", { start: 7, end: 8 }), frameRate: 10 });
@@ -62,8 +62,10 @@ export class BootScene extends Phaser.Scene {
     this.anims.create({ key: "winsth-hurt", frames: [{ key: "winsth", frame: 7 }] });
     this.anims.create({ key: "lina-run", frames: this.anims.generateFrameNumbers("lina", { start: 0, end: 1 }), frameRate: 8, repeat: -1 });
     for (const key of ["npc-ilda", "npc-worker", "npc-mechanic", "npc-child"]) {
-      this.anims.create({ key: `${key}-idle`, frames: this.anims.generateFrameNumbers(key, { start: 0, end: 1 }), frameRate: 2, repeat: -1 });
-      this.anims.create({ key: `${key}-walk`, frames: this.anims.generateFrameNumbers(key, { start: 0, end: 1 }), frameRate: 4, repeat: -1 });
+      // Existing frame 1 only translates the pose upward. Keep feet planted;
+      // genuine articulated NPC walk cycles remain REVIEW, not final animation.
+      this.anims.create({ key: `${key}-idle`, frames: [{ key, frame: 0 }] });
+      this.anims.create({ key: `${key}-walk`, frames: [{ key, frame: 0 }] });
     }
     this.scene.start(SCENE.menu);
   }

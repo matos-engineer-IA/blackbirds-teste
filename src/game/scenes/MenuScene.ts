@@ -23,6 +23,8 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.cursor = 0;
+    this.panel = undefined;
     const { width, height } = this.scale;
     this.add.tileSprite(width / 2, 110, width, 220, "bg-far").setScrollFactor(0);
     this.add.tileSprite(width / 2, 200, width, 250, "bg-mid").setScrollFactor(0).setAlpha(0.92);
@@ -94,7 +96,6 @@ export class MenuScene extends Phaser.Scene {
     }
     if (selected.key === "arena") {
       this.scene.start(SCENE.arena);
-      this.scene.launch(SCENE.ui);
       return;
     }
     if (selected.key === "boss") {

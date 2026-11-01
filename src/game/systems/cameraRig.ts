@@ -1,22 +1,30 @@
 import Phaser from "phaser";
+import { dampingAlpha } from "../mechanics/smoothing";
 
 export class CameraRig {
+  private lookAhead = 28;
   constructor(private readonly camera: Phaser.Cameras.Scene2D.Camera) {}
 
   setup(width: number, height: number, target: Phaser.GameObjects.GameObject): void {
-    this.camera.startFollow(target, true, 0.1, 0.14);
+    this.lookAhead = 28;
+    this.camera.startFollow(target, true, 1, 1);
     this.camera.setDeadzone(70, 36);
     this.camera.setRoundPixels(true);
     this.camera.setBounds(0, 0, width, height);
     this.camera.setFollowOffset(-28, 18);
+    const actor = target as Phaser.GameObjects.Sprite;
+    this.camera.centerOn(actor.x + 28, actor.y - 90);
   }
 
-  look(facing: -1 | 1, locked = false): void {
+  look(facing: -1 | 1, deltaMs: number, locked = false): void {
     if (locked) return;
-    this.camera.setFollowOffset(-facing * 42, 18);
+    this.lookAhead += (facing * 42 - this.lookAhead) * dampingAlpha(deltaMs, 0.2);
+    this.camera.setFollowOffset(-this.lookAhead, 18);
+    this.camera.setLerp(dampingAlpha(deltaMs, 0.14), dampingAlpha(deltaMs, 0.22));
   }
 
-  hold(): void {
-    this.camera.setFollowOffset(this.camera.followOffset.x, this.camera.followOffset.y);
+  cinematic(x: number, y: number): void {
+    this.camera.stopFollow();
+    this.camera.pan(x, y, 600);
   }
 }

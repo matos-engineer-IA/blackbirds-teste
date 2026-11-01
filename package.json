@@ -12,14 +12,20 @@
     "build": "tsc --noEmit -p tsconfig.json && vite build",
     "preview": "vite preview --host --port 8080",
     "test": "vitest run",
+    "test:browser": "node scripts/browser-regression.mjs",
+    "test:combat:browser": "node scripts/browser-combat.mjs",
+    "assets:audit": "node scripts/audit-assets.mjs",
+    "art:ground": "node scripts/prepare-ground.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "assets": "node scripts/generate-assets.mjs",
-    "art": "python scripts/process-painted-art.py ; python scripts/slice-nero.py ; python scripts/make-gameplay-art.py"
+    "art": "python3 scripts/process-painted-art.py && python3 scripts/slice-nero.py && python3 scripts/make-gameplay-art.py && node scripts/prepare-ground.mjs"
   },
   "dependencies": {
     "phaser": "4.2.1"
   },
   "devDependencies": {
+    "playwright": "1.56.1",
+    "pngjs": "7.0.0",
     "typescript": "5.7.3",
     "vite": "6.3.5",
     "vitest": "3.2.4"

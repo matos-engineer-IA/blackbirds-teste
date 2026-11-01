@@ -8,6 +8,23 @@
 - Lâmpada, brilho e vapor de `scripts/process-painted-art.py`
 - Áudio sintético via Web Audio API
 
+## Calçamento em revisão — 1 de novembro de 2026
+
+- Fonte: `art/source/cobble-review-v2-source.png`, criada nesta sessão pelo tool
+  integrado **imagegen**, sem imagens de jogos comerciais como referência.
+- Prompt exato: `art/source/cobble-review-v2-prompt.txt`.
+- Derivado: `public/assets/tilesets/cobble-review-v2.png`, 768×42, produzido por
+  `scripts/prepare-ground.mjs` (recorte, amostragem nearest-neighbor e espelhamento
+  para fechar a emenda horizontal). O PNG antigo continua preservado.
+- Status: **REVIEW**. Integrado e visualizado; nenhuma aprovação artística humana presumida.
+- Registro técnico de todos os PNGs: `art/asset-audit.json`, com dimensões,
+  hashes, fontes declaradas, limites de frames e pendências. O manifest não
+  certifica a autoria histórica dos materiais recebidos nem os promove a finais.
+
+## Ferramentas de verificação adicionadas
+
+Playwright (Apache-2.0) e pngjs (MIT), somente em desenvolvimento.
+
 Licença: a mesma do repositório (uso do jogo). Autoria: produção interna de Black Bird: Revolução.
 
 ## Terceiros

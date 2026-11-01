@@ -11,10 +11,10 @@ export class WeatherSystem {
 
   apply(id: WeatherId): void {
     this.fog?.destroy();
-    this.rain?.stop();
+    this.rain?.destroy();
     this.fog = undefined;
+    this.rain = undefined;
     this.current = id;
-    const cam = this.scene.cameras.main;
     if (id === "fog" || id === "steam") {
       this.fog = this.scene.add
         .rectangle(GAME.width / 2, GAME.height / 2, GAME.width + 40, GAME.height + 40, 0x7d8894, id === "steam" ? 0.05 : 0.07)
@@ -23,7 +23,7 @@ export class WeatherSystem {
     }
     if (id === "rain") {
       this.rain = this.scene.add.particles(0, 0, "steam", {
-        x: { min: cam.scrollX, max: cam.scrollX + GAME.width },
+        x: { min: 0, max: GAME.width },
         y: 0,
         lifespan: 900,
         speedY: { min: 180, max: 260 },
@@ -36,10 +36,8 @@ export class WeatherSystem {
     }
   }
 
-  follow(scrollX: number): void {
-    if (this.rain) {
-      this.rain.setX(scrollX + GAME.width / 2);
-    }
+  follow(_scrollX: number): void {
+    // Emitter is screen-relative. Adding scrollX again moved rain offscreen.
   }
 
   get id(): WeatherId {

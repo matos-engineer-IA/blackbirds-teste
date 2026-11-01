@@ -26,15 +26,18 @@ export class UIScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.objective = this.add.text(14, GAME.height - 16, "", {
+    this.objective = this.add.text(14, 12, "", {
       fontFamily: "Georgia, serif",
       fontSize: "10px",
       color: "#c4a36a",
+      backgroundColor: "rgba(12, 10, 8, 0.85)",
+      padding: { left: 5, right: 5, top: 3, bottom: 3 },
     }).setScrollFactor(0).setDepth(20).setAlpha(0.9);
     this.prompt = this.add.text(GAME.width - 14, GAME.height - 16, "", {
       fontFamily: "Georgia, serif",
       fontSize: "10px",
       color: "#e6c36a",
+      backgroundColor: "rgba(12, 10, 8, 0.85)",
     }).setOrigin(1, 0).setScrollFactor(0).setDepth(20);
     this.panel = this.add.image(GAME.width / 2, GAME.height - 54, "ui-dialogue").setScrollFactor(0).setDepth(21).setVisible(false);
     this.speaker = this.add.text(78, GAME.height - 82, "", {
@@ -50,22 +53,40 @@ export class UIScene extends Phaser.Scene {
     }).setScrollFactor(0).setDepth(22);
 
     const game = this.scene.get(SCENE.game) as GameScene;
-    game.events.on("hud", (info: HudInfo) => this.drawHud(info));
-    game.events.on("dialogue", (line?: DialogueLine) => this.drawDialogue(line));
-    game.events.on("pause", () => this.showMenu("PAUSA", ["CONTINUAR", "REINICIAR PROLOGO", "MENU"], (choice) => {
+    const handlers = {
+      hud: (info: HudInfo) => this.drawHud(info),
+      dialogue: (line?: DialogueLine) => this.drawDialogue(line),
+      cutscene: (phase: string) => {
+        const visible = !["black", "silence", "title", "done"].includes(phase);
+        this.objective.setVisible(visible);
+        this.prompt.setVisible(visible);
+        if (!visible) this.drawDialogue(undefined);
+      },
+      pause: () => this.showMenu("PAUSA", ["CONTINUAR", "REINICIAR PRÓLOGO", "MENU"], (choice) => {
       if (choice === 0) {
         this.clearOverlay();
         game.resumePlay();
       } else if (choice === 1) game.replay();
       else game.restartFull();
-    }));
-    game.events.on("unpause", () => this.clearOverlay());
-    game.events.on("prologue-end", (run: RunSnapshot) => {
+      }),
+      unpause: () => this.clearOverlay(),
+      "prologue-end": (run: RunSnapshot) => {
       const time = formatTime(elapsedSeconds(run));
       this.showMenu(`BLACK BIRD: REVOLUÇÃO\nO último dia acabou.\n${time}`, ["JOGAR NOVAMENTE", "MENU"], (choice) => {
         if (choice === 0) game.replay();
         else game.restartFull();
       });
+      },
+    };
+    for (const [event, handler] of Object.entries(handlers)) game.events.on(event, handler);
+    const onEscape = () => {
+      if (game.scene.isPaused()) game.resumePlay();
+    };
+    this.input.keyboard?.on("keydown-ESC", onEscape);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      for (const [event, handler] of Object.entries(handlers)) game.events.off(event, handler);
+      this.input.keyboard?.off("keydown-ESC", onEscape);
+      this.clearOverlay();
     });
   }
 
@@ -114,13 +135,18 @@ export class UIScene extends Phaser.Scene {
       label.on("pointerdown", () => onPick(index));
     });
     const onKey = (event: KeyboardEvent) => {
+      if (event.repeat) return;
+      if (event.code === "Enter" || event.code === "Space") {
+        onPick(cursor);
+        return; // onPick may destroy labels. Never repaint a destroyed Text.
+      }
       if (event.code === "ArrowUp" || event.code === "KeyW") cursor = (cursor + options.length - 1) % options.length;
-      if (event.code === "ArrowDown" || event.code === "KeyS") cursor = (cursor + 1) % options.length;
-      if (event.code === "Enter" || event.code === "Space") onPick(cursor);
+      else if (event.code === "ArrowDown" || event.code === "KeyS") cursor = (cursor + 1) % options.length;
+      else return;
       paint();
     };
     this.input.keyboard?.on("keydown", onKey);
-    this.overlay = this.add.container(0, 0, [dim, heading, ...labels]);
+    this.overlay = this.add.container(0, 0, [dim, heading, ...labels]).setDepth(100);
     this.overlay.setData("onKey", onKey);
   }
 

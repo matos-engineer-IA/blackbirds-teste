@@ -6,6 +6,7 @@ import { addContactShadow, anchorFeet } from "../utils/footAnchor";
 import { PLAYER } from "../utils/constants";
 import { SCALE } from "../utils/scale";
 import { sfx } from "../utils/audio";
+import { AttackTimeline, NERO_MELEE } from "../mechanics/attackTimeline";
 
 export type PlayerInput = {
   left: boolean;
@@ -39,13 +40,16 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private steam?: Phaser.GameObjects.Particles.ParticleEmitter;
   private shadow: Phaser.GameObjects.Image;
   private animState: AnimState = "idle";
+  private jumpHeld = false;
+  private meleeAction?: AttackTimeline;
+  private meleeBufferMs = 0;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, "nero", 0);
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.setDepth(8);
-    anchorFeet(this, SCALE.neroFrame.w, SCALE.neroFrame.h, 24, 86);
+    anchorFeet(this, SCALE.neroFrame.w, SCALE.neroFrame.h, 24, 66, SCALE.actorRenderScale);
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setMaxVelocity(420, 560);
     body.setCollideWorldBounds(true);
@@ -66,10 +70,21 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     return this.attackMs > 0;
   }
 
+  get meleeActive(): boolean {
+    return this.meleeAction?.activeThisTick ?? false;
+  }
+
+  consumeMeleeHit(target: object): boolean {
+    return this.meleeAction?.consumeHit(target) ?? false;
+  }
+
   updatePlayer(input: PlayerInput, dtMs: number): void {
     const dt = dtMs / 1000;
     const body = this.body as Phaser.Physics.Arcade.Body;
-    const grounded = this.onGround;
+    const grounded = this.onGround && body.velocity.y >= 0;
+    if (this.meleeAction?.finished) this.meleeAction = undefined;
+    this.meleeAction?.tick(dtMs);
+    this.meleeBufferMs = Math.max(0, this.meleeBufferMs - dtMs);
     this.coyoteMs = nextCoyote(grounded, this.coyoteMs, dtMs, PLAYER.coyoteMs);
     this.jumpBufferMs = nextJumpBuffer(input.jumpPressed, this.jumpBufferMs, dtMs, PLAYER.jumpBufferMs);
     this.iFrameMs = Math.max(0, this.iFrameMs - dtMs);
@@ -77,12 +92,18 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.attackCdMs = Math.max(0, this.attackCdMs - dtMs);
     this.comboMs = Math.max(0, this.comboMs - dtMs);
     this.fireCdMs = Math.max(0, this.fireCdMs - dtMs);
+    const reloadBefore = this.reloadMs;
     this.reloadMs = Math.max(0, this.reloadMs - dtMs);
+    if (reloadBefore > 0 && this.reloadMs <= 0) this.ammo = PLAYER.maxAmmo;
     this.landMs = Math.max(0, this.landMs - dtMs);
-    this.shadow.setPosition(this.x, this.y - 1).setVisible(grounded);
+    this.shadow.setPosition(this.x, this.y + 1).setVisible(grounded);
 
     if (this.locked) {
       body.setVelocity(0, body.velocity.y);
+      this.jumpBufferMs = 0;
+      this.coyoteMs = 0;
+      this.meleeBufferMs = 0;
+      this.jumpHeld = input.jump;
       this.setAnim("idle");
       return;
     }
@@ -97,15 +118,20 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.coyoteMs = 0;
       this.jumpBufferMs = 0;
       sfx.jump();
-    } else {
-      body.setVelocityY(cutJump(body.velocity.y, input.jump, PLAYER.jumpCut));
+    } else if (this.jumpHeld && !input.jump) {
+      body.setVelocityY(cutJump(body.velocity.y, false, PLAYER.jumpCut));
     }
+    this.jumpHeld = input.jump;
 
-    if (this.combatEnabled && input.melee && this.attackCdMs <= 0) {
+    if (input.melee && this.meleeAction && this.meleeAction.remainingMs <= 120) this.meleeBufferMs = 120;
+    if (this.combatEnabled && (input.melee || this.meleeBufferMs > 0) && this.attackMs <= 0 && this.hp > 0) {
+      this.reloadMs = 0; // Cancel before atomic commit: no ammunition is granted.
+      this.meleeBufferMs = 0;
       this.meleeStep = nextMeleeStep(this.meleeStep, this.comboMs > 0);
-      this.attackMs = this.meleeStep >= 3 ? 220 : PLAYER.attackMs;
-      this.attackCdMs = PLAYER.attackCooldownMs;
-      this.comboMs = PLAYER.meleeComboWindowMs;
+      this.meleeAction = new AttackTimeline(NERO_MELEE[this.meleeStep - 1], this.facing);
+      this.attackMs = this.meleeAction.durationMs;
+      this.attackCdMs = this.attackMs;
+      this.comboMs = this.attackMs + PLAYER.meleeComboWindowMs;
       sfx.attack();
       if (this.meleeStep >= 3) {
         sfx.steam();
@@ -113,14 +139,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       }
     }
 
-    if (this.combatEnabled && input.reload && this.reloadMs <= 0 && this.ammo < PLAYER.maxAmmo) {
+    if (this.combatEnabled && input.reload && this.attackMs <= 0 && this.reloadMs <= 0 && this.ammo < PLAYER.maxAmmo) {
       this.reloadMs = PLAYER.reloadMs;
-      this.ammo = PLAYER.maxAmmo;
-      this.animState = "reload";
       sfx.reload();
     }
 
-    if (this.combatEnabled && input.fire && canFire(this.ammo, this.fireCdMs, this.reloadMs > 0)) {
+    if (this.combatEnabled && input.fire && this.attackMs <= 0 && canFire(this.ammo, this.fireCdMs, this.reloadMs > 0)) {
       this.ammo = afterShot(this.ammo);
       this.fireCdMs = PLAYER.revolverCooldownMs;
       this.attackMs = 140;
@@ -144,6 +168,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (next === this.hp) return false;
     this.hp = next;
     this.iFrameMs = PLAYER.iFrameMs;
+    this.reloadMs = 0;
+    this.meleeAction = undefined;
+    this.meleeBufferMs = 0;
+    this.attackMs = 0;
+    if (this.hp <= 0) this.locked = true;
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setVelocity((this.x < fromX ? -1 : 1) * PLAYER.knockbackX, -PLAYER.knockbackY);
     sfx.hit();
@@ -152,7 +181,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   attackHitbox(): Phaser.Geom.Rectangle {
     const wide = this.meleeStep >= 3 ? PLAYER.attackRange + 18 : PLAYER.attackRange;
-    const x = this.facing > 0 ? this.x + 18 : this.x - 18 - wide;
+    const x = this.facing > 0 ? this.x + 18 : this.x - 18 - wide - 14;
     return new Phaser.Geom.Rectangle(x, this.y - 70, wide + 14, 42);
   }
 
@@ -164,10 +193,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.animState === next && this.anims.isPlaying) return;
     this.animState = next;
     const key = `player-${next === "walk" ? "run" : next}`;
-    if (this.anims.currentAnim?.key !== key) this.play(key, true);
+    if (this.anims.currentAnim?.key !== key || !this.anims.isPlaying) this.play(key, true);
   }
 
   private refreshAnim(): void {
+    if (this.meleeAction && this.attackMs > 0) {
+      this.anims.stop();
+      this.setFrame(this.meleeAction.elapsedMs < this.meleeAction.definition.startupMs ? 7 : 8);
+      return;
+    }
     if (this.iFrameMs > 750) {
       this.setAnim("hurt");
       return;

@@ -100,7 +100,7 @@ def collect_sources() -> None:
     if CURSOR_ASSETS.exists():
         for src in CURSOR_ASSETS.glob("*.jpg"):
             dest = SOURCE / src.name
-            if not dest.exists() or src.stat().st_mtime > dest.stat().st_mtime:
+            if not dest.exists():
                 shutil.copy2(src, dest)
 
 

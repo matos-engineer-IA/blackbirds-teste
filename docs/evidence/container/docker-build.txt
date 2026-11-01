@@ -1,0 +1,86 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 596B done
+#1 DONE 0.1s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 0.6s
+
+#3 docker-image://docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+#3 resolve docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e 0.0s done
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/node:22-alpine
+#4 DONE 0.5s
+
+#5 [internal] load metadata for docker.io/library/nginx:1.27-alpine
+#5 DONE 0.5s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 236B done
+#6 DONE 0.0s
+
+#7 [stage-1 1/3] FROM docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10
+#7 resolve docker.io/library/nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10 0.0s done
+#7 DONE 0.0s
+
+#8 [build 1/6] FROM docker.io/library/node:22-alpine@sha256:fe4f6d74e20370acb04ad889077d14d0f64a9c8ea6a42bc60cddf1e844699914
+#8 resolve docker.io/library/node:22-alpine@sha256:fe4f6d74e20370acb04ad889077d14d0f64a9c8ea6a42bc60cddf1e844699914 0.0s done
+#8 DONE 0.0s
+
+#9 [internal] load build context
+#9 transferring context: 42.63kB 0.0s done
+#9 DONE 0.1s
+
+#10 [build 2/6] WORKDIR /app
+#10 CACHED
+
+#11 [build 3/6] COPY package.json package-lock.json ./
+#11 CACHED
+
+#12 [build 4/6] RUN npm ci
+#12 CACHED
+
+#13 [build 5/6] COPY . .
+#13 DONE 0.1s
+
+#14 [build 6/6] RUN npm run build
+#14 0.573
+#14 0.573 > black-bird-revolucao@1.0.0 build
+#14 0.573 > tsc --noEmit -p tsconfig.json && vite build
+#14 0.573
+#14 3.793 vite v6.3.5 building for production...
+#14 3.889 transforming...
+#14 8.541 ✓ 43 modules transformed.
+#14 8.961 rendering chunks...
+#14 9.800 computing gzip size...
+#14 9.857 dist/index.html                     0.66 kB │ gzip:   0.40 kB
+#14 9.857 dist/assets/index-DtbSN6h5.css      0.27 kB │ gzip:   0.21 kB
+#14 9.858 dist/assets/index-DMbcotKe.js      58.56 kB │ gzip:  17.90 kB
+#14 9.858 dist/assets/phaser-BwSGr_Za.js  1,684.94 kB │ gzip: 381.36 kB
+#14 9.858
+#14 9.858 (!) Some chunks are larger than 500 kB after minification. Consider:
+#14 9.858 - Using dynamic import() to code-split the application
+#14 9.858 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+#14 9.858 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+#14 9.858 ✓ built in 6.03s
+#14 DONE 10.0s
+
+#15 [stage-1 2/3] COPY nginx.conf /etc/nginx/nginx.conf
+#15 CACHED
+
+#16 [stage-1 3/3] COPY --from=build /app/dist /usr/share/nginx/html
+#16 DONE 0.1s
+
+#17 exporting to image
+#17 exporting layers
+#17 exporting layers 0.3s done
+#17 exporting manifest sha256:29b2f2585aa6aa8bdc5c425577690ad1b75da9fad0c9596aa9665c3d18b00b52 done
+#17 exporting config sha256:a46520ebf43f87eb82bbc11fe1971bccc05c95bbb9ea4837c286f986ac8ba6c5 done
+#17 exporting attestation manifest sha256:c08ca2780de694b16b7b3ed1fb2d5e5212659a23621b80931422e2e1045fae04 0.0s done
+#17 exporting manifest list sha256:bdc4260e4bdcde891f530a08a55a0f512f8ca8a994be469f580d30a3dfdc356e done
+#17 naming to docker.io/library/black-bird-revolucao:codex-local-20261101 done
+#17 unpacking to docker.io/library/black-bird-revolucao:codex-local-20261101
+#17 unpacking to docker.io/library/black-bird-revolucao:codex-local-20261101 0.2s done
+#17 DONE 0.6s

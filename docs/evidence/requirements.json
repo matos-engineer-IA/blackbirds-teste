@@ -1,0 +1,23 @@
+{
+  "releaseReady": false,
+  "NAR-01": {
+    "status": "falhou",
+    "observedOutboundActiveSeconds": 55.264479999998585,
+    "requiredSeconds": 180,
+    "note": "Percurso até a extremidade da escola; não contar ida+volta, pausa ou diálogos como ida."
+  },
+  "artApproval": {
+    "status": "não executado",
+    "note": "Nero/NPCs/terreno REVIEW; Winsth/filha BLOCKOUT."
+  },
+  "hml": {
+    "status": "não executado"
+  },
+  "fullRegressionMatrix": {
+    "status": "não executado",
+    "note": "Somente cenários e asserções dos scripts registrados; IDs agrupados têm cobertura parcial."
+  },
+  "browserScenarioGroupsPassed": 10,
+  "combatScenarioGroupsPassed": 16,
+  "unitTestsPassed": 27
+}

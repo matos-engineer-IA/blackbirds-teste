@@ -7,6 +7,10 @@ import { palette } from "../palette";
 import { GAME, SCENE } from "../utils/constants";
 import { GROUND } from "../utils/scale";
 import { unlockAudio } from "../utils/audio";
+import { CameraRig } from "../systems/cameraRig";
+import { bodyBounds } from "../utils/footAnchor";
+import { PressureWave } from "../entities/PressureWave";
+import type { WinsthMove } from "../mechanics/bossAttacks";
 
 const ARENA_W = 1280;
 
@@ -22,12 +26,17 @@ export class BossArenaScene extends Phaser.Scene {
   private fireWasDown = false;
   private hitOnce = false;
   private info!: Phaser.GameObjects.Text;
+  private cameraRig!: CameraRig;
+  private waves!: Phaser.Physics.Arcade.Group;
+  private telegraph!: Phaser.GameObjects.Graphics;
 
   constructor() {
     super(SCENE.boss);
   }
 
   create(): void {
+    this.hitOnce = false;
+    this.jumpWasDown = this.meleeWasDown = this.fireWasDown = false;
     unlockAudio();
     this.add.tileSprite(GAME.width / 2, 140, GAME.width + 80, 250, "bg-mid").setScrollFactor(0);
     this.info = this.add.text(14, 10, "", {
@@ -35,7 +44,7 @@ export class BossArenaScene extends Phaser.Scene {
       fontSize: "11px",
       color: "#c4a36a",
     }).setScrollFactor(0).setDepth(20);
-    this.add.text(14, GAME.height - 16, "DEV  ·  J soco  ·  K revolver  ·  R recarregar  ·  F5 reinicia  ·  ESC menu", {
+    this.add.text(14, GAME.height - 16, "DEV · arte provisória · 1–4 ataque · 0 auto · J soco · K tiro · R recarga · F5 reset · ESC menu", {
       fontFamily: "Georgia, serif",
       fontSize: "10px",
       color: "#9a8770",
@@ -47,14 +56,14 @@ export class BossArenaScene extends Phaser.Scene {
     this.player.combatEnabled = true;
     this.boss = new Winsth(this, 820, GROUND.y);
     this.shots = this.physics.add.group();
+    this.waves = this.physics.add.group();
+    this.telegraph = this.add.graphics().setDepth(9);
     this.physics.world.setBounds(0, 0, ARENA_W, GROUND.worldHeight);
     this.physics.add.collider(this.player, this.world.solids);
     this.physics.add.collider(this.boss, this.world.solids);
     this.cameras.main.setBackgroundColor(palette.charcoal);
-    this.cameras.main.startFollow(this.player, true, 0.1, 0.12);
-    this.cameras.main.setDeadzone(80, 30);
-    this.cameras.main.setBounds(0, 0, ARENA_W, GROUND.worldHeight);
-    this.cameras.main.setRoundPixels(true);
+    this.cameraRig = new CameraRig(this.cameras.main);
+    this.cameraRig.setup(ARENA_W, GROUND.worldHeight, this.player);
     this.cursors = this.input.keyboard!.createCursorKeys();
     this.keys = this.input.keyboard!.addKeys("A,D,W,J,K,Z,X,R,ESC,SPACE") as Record<string, Phaser.Input.Keyboard.Key>;
     this.input.keyboard?.on("keydown-ESC", () => {
@@ -62,6 +71,13 @@ export class BossArenaScene extends Phaser.Scene {
       this.scene.start(SCENE.menu);
     });
     this.input.keyboard?.on("keydown-F5", () => this.scene.restart());
+    this.input.keyboard?.addCapture("F5");
+    const moves: WinsthMove[] = ["horizontal", "slam", "charge", "wave"];
+    this.input.keyboard?.on("keydown", (event: KeyboardEvent) => {
+      if (event.code === "Digit0") this.boss.forcedMove = undefined;
+      const index = Number(event.key) - 1;
+      if (index >= 0 && index < moves.length) this.boss.forcedMove = moves[index];
+    });
   }
 
   update(_time: number, delta: number): void {
@@ -82,23 +98,31 @@ export class BossArenaScene extends Phaser.Scene {
       delta,
     );
     if (this.player.ammo < ammoBefore) {
-      this.shots.add(new Projectile(this, this.player.x + this.player.facing * 22, this.player.y - 52, this.player.facing));
+      new Projectile(this, this.player.x + this.player.facing * 22, this.player.y - 44, this.player.facing, this.shots);
     }
-    this.boss.think(this.player.x, delta);
+    if (this.player.hp > 0) this.boss.think(this.player.x, delta);
+    else this.boss.setVelocityX(0);
+    if (this.boss.takeWaveRequest()) new PressureWave(this, this.boss.x + this.boss.facing * 32, this.boss.y, this.boss.facing, this.waves);
     this.resolveCombat();
-    this.keepFightersInView();
+    this.drawTelegraph();
+    this.cameraRig.look(this.player.facing, delta);
     this.jumpWasDown = jumpDown;
     this.meleeWasDown = meleeDown;
     this.fireWasDown = fireDown;
     this.info.setText(
-      `WINSTH  ${this.boss.hp}/${this.boss.maxHp}   ${this.boss.phase}   ${this.boss.move}\nNero ${this.player.hp}  munição ${this.player.ammo}/6  ·  escala 184/144`,
+      `WINSTH  ${this.boss.hp}/${this.boss.maxHp}   ${this.boss.phase}   ${this.boss.move}\nNero ${this.player.hp}  munição ${this.player.ammo}/6  ·  ${this.boss.forcedMove ? "ataque isolado" : "seleção automática"}`,
     );
   }
 
   private resolveCombat(): void {
+    if (this.boss.defeated || this.player.hp <= 0) {
+      this.waves.clear(true, true);
+      this.shots.clear(true, true);
+      return;
+    }
     if (this.boss.phase === "ATTACK" && !this.hitOnce) {
       const box = this.boss.attackBox();
-      if (Phaser.Geom.Intersects.RectangleToRectangle(box, this.player.getBounds())) {
+      if (Phaser.Geom.Intersects.RectangleToRectangle(box, bodyBounds(this.player))) {
         this.player.takeHit(this.boss.x);
         this.hitOnce = true;
         if (this.boss.move === "slam") {
@@ -108,24 +132,42 @@ export class BossArenaScene extends Phaser.Scene {
       }
     }
     if (this.boss.phase !== "ATTACK") this.hitOnce = false;
+    this.waves.getChildren().forEach(child => {
+      const wave = child as PressureWave;
+      if (wave.active && Phaser.Geom.Intersects.RectangleToRectangle(bodyBounds(wave), bodyBounds(this.player))) {
+        this.player.takeHit(wave.x);
+        wave.destroy();
+      }
+    });
 
     this.shots.getChildren().forEach((child) => {
       const shot = child as Projectile;
-      if (shot.active && Phaser.Geom.Intersects.RectangleToRectangle(shot.getBounds(), this.boss.getBounds())) {
+      if (shot.active && !this.boss.defeated && Phaser.Geom.Intersects.RectangleToRectangle(shot.getBounds(), bodyBounds(this.boss))) {
         this.boss.hit(1, this.player.x);
         shot.destroy();
       }
     });
-    if (this.player.attacking && this.player.anims.currentAnim?.key === "player-melee") {
-      if (Phaser.Geom.Intersects.RectangleToRectangle(this.player.attackHitbox(), this.boss.getBounds())) {
+    if (this.player.meleeActive && !this.boss.defeated) {
+      if (Phaser.Geom.Intersects.RectangleToRectangle(this.player.attackHitbox(), bodyBounds(this.boss)) && this.player.consumeMeleeHit(this.boss)) {
         this.boss.hit(this.player.lastMeleeDamage(), this.player.x);
       }
     }
   }
 
-  private keepFightersInView(): void {
-    const mid = (this.player.x + this.boss.x) / 2;
-    const target = Phaser.Math.Clamp(mid, 320, ARENA_W - 320);
-    this.cameras.main.scrollX = Phaser.Math.Linear(this.cameras.main.scrollX, target - 320, 0.06);
+  private drawTelegraph(): void {
+    const gfx = this.telegraph.clear();
+    if (this.boss.phase !== "TELEGRAPH" || this.player.hp <= 0) return;
+    gfx.lineStyle(2, 0xe6c36a, 0.9);
+    if (this.boss.move === "wave") {
+      gfx.strokeEllipse(this.boss.x + this.boss.facing * 30, GROUND.y - 12, 34, 20);
+      gfx.lineBetween(this.boss.x + this.boss.facing * 45, GROUND.y - 4, this.boss.x + this.boss.facing * 200, GROUND.y - 4);
+    } else if (this.boss.move === "charge") {
+      const endX = this.boss.x + this.boss.facing * 150;
+      gfx.lineBetween(this.boss.x, GROUND.y - 12, endX, GROUND.y - 12);
+      gfx.strokeTriangle(endX, GROUND.y - 12, endX - this.boss.facing * 16, GROUND.y - 20, endX - this.boss.facing * 16, GROUND.y - 4);
+    } else {
+      const box = this.boss.attackBox();
+      gfx.strokeRect(box.x, box.y, box.width, box.height);
+    }
   }
 }

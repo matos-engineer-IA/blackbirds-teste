@@ -3,6 +3,7 @@ import { applyDamage, isDefeated } from "../mechanics/combat";
 import { addContactShadow, anchorFeet } from "../utils/footAnchor";
 import { SCALE } from "../utils/scale";
 import { sfx } from "../utils/audio";
+import { chooseWinsthMove, WINSTH_ATTACKS, type WinsthMove } from "../mechanics/bossAttacks";
 
 export type WinsthPhase =
   | "IDLE"
@@ -15,7 +16,7 @@ export type WinsthPhase =
   | "STAGGER"
   | "DEFEATED";
 
-export type WinsthMove = "horizontal" | "slam" | "charge" | "wave";
+export type { WinsthMove } from "../mechanics/bossAttacks";
 
 export class Winsth extends Phaser.Physics.Arcade.Sprite {
   hp = 28;
@@ -27,6 +28,10 @@ export class Winsth extends Phaser.Physics.Arcade.Sprite {
   phaseMs = 0;
   private homeX = 0;
   private shadow: Phaser.GameObjects.Image;
+  private previousMove?: WinsthMove;
+  private attackTurn = 0;
+  private wavePending = false;
+  forcedMove?: WinsthMove;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, "winsth", 0);
@@ -34,9 +39,12 @@ export class Winsth extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.existing(this);
     this.homeX = x;
     this.setDepth(8);
-    anchorFeet(this, SCALE.winsthFrame.w, SCALE.winsthFrame.h, 46, 110);
+    anchorFeet(this, SCALE.winsthFrame.w, SCALE.winsthFrame.h, 46, 86, SCALE.actorRenderScale, 235);
     const body = this.body as Phaser.Physics.Arcade.Body;
-    body.setImmovable(true);
+    // An immovable actor cannot separate from an immovable static floor.
+    // Non-pushable preserves weight while still allowing ground resolution.
+    body.setImmovable(false).setCollideWorldBounds(true);
+    this.setPushable(false);
     body.setMaxVelocity(220, 560);
     this.shadow = addContactShadow(scene, this).setScale(1.6, 1);
     this.play("winsth-idle", true);
@@ -71,14 +79,14 @@ export class Winsth extends Phaser.Physics.Arcade.Sprite {
 
   attackBox(): Phaser.Geom.Rectangle {
     if (this.move === "slam") return new Phaser.Geom.Rectangle(this.x - 70, this.y - 36, 140, 36);
-    if (this.move === "wave") return new Phaser.Geom.Rectangle(this.x + this.facing * 20 - 90, this.y - 50, 180, 40);
+    if (this.move === "wave") return new Phaser.Geom.Rectangle(this.x, this.y, 0, 0);
     if (this.move === "charge") return new Phaser.Geom.Rectangle(this.x - 40, this.y - 90, 80, 90);
     const x = this.facing > 0 ? this.x + 20 : this.x - 120;
     return new Phaser.Geom.Rectangle(x, this.y - 80, 100, 70);
   }
 
   think(targetX: number, dtMs: number): void {
-    this.shadow.setPosition(this.x, this.y - 1);
+    this.shadow.setPosition(this.x, this.y + 1);
     if (this.phase === "DEFEATED") {
       this.setVelocityX(0);
       this.setAlpha(0.7);
@@ -87,7 +95,7 @@ export class Winsth extends Phaser.Physics.Arcade.Sprite {
     this.cooldownMs = Math.max(0, this.cooldownMs - dtMs);
     this.phaseMs = Math.max(0, this.phaseMs - dtMs);
     const dist = targetX - this.x;
-    this.facing = dist >= 0 ? 1 : -1;
+    if (["IDLE", "PATROL", "AGGRO", "APPROACH"].includes(this.phase)) this.facing = dist >= 0 ? 1 : -1;
     this.setFlipX(this.facing < 0);
 
     if (this.phase === "STAGGER") {
@@ -100,7 +108,7 @@ export class Winsth extends Phaser.Physics.Arcade.Sprite {
       return;
     }
     if (this.phase === "AGGRO" || this.phase === "APPROACH") {
-      if (Math.abs(dist) > 90) {
+      if (Math.abs(dist) > 260) {
         this.setVelocityX(this.facing * 70);
         this.play("winsth-walk", true);
         this.phase = "APPROACH";
@@ -112,14 +120,14 @@ export class Winsth extends Phaser.Physics.Arcade.Sprite {
     }
     if (this.phase === "TELEGRAPH") {
       this.setVelocityX(0);
-      if (this.phaseMs <= 0) this.enter("ATTACK", this.move === "slam" ? 280 : 220);
+      if (this.phaseMs <= 0) this.enter("ATTACK", WINSTH_ATTACKS[this.move].activeMs);
       return;
     }
     if (this.phase === "ATTACK") {
       if (this.move === "charge") this.setVelocityX(this.facing * 180);
-      if (this.phaseMs <= 0) {
-        this.enter("RECOVERY", 500);
-        this.cooldownMs = this.move === "wave" ? 1400 : 700;
+      if (this.phaseMs <= 0 || (this.move === "charge" && ((this.body as Phaser.Physics.Arcade.Body).blocked.left || (this.body as Phaser.Physics.Arcade.Body).blocked.right))) {
+        this.enter("RECOVERY", WINSTH_ATTACKS[this.move].recoveryMs);
+        this.cooldownMs = WINSTH_ATTACKS[this.move].recoveryMs + 250;
       }
       return;
     }
@@ -132,14 +140,25 @@ export class Winsth extends Phaser.Physics.Arcade.Sprite {
   private enter(phase: WinsthPhase, duration: number): void {
     this.phase = phase;
     this.phaseMs = duration;
+    this.setVelocityX(0);
     if (phase === "TELEGRAPH") this.play("winsth-telegraph", true);
-    if (phase === "ATTACK") this.play(this.move === "slam" ? "winsth-slam" : "winsth-swing", true);
+    if (phase === "ATTACK") {
+      this.play(this.move === "slam" ? "winsth-slam" : "winsth-swing", true);
+      this.wavePending = this.move === "wave";
+    }
+  }
+
+  takeWaveRequest(): boolean {
+    const emit = this.wavePending && !this.defeated;
+    this.wavePending = false;
+    return emit;
   }
 
   private beginAttack(dist: number): void {
     const abs = Math.abs(dist);
-    this.move = abs > 160 ? "charge" : abs < 70 ? "slam" : this.hp < 12 ? "wave" : "horizontal";
-    this.enter("TELEGRAPH", this.move === "slam" ? 420 : 280);
+    this.move = this.forcedMove ?? chooseWinsthMove(abs, this.previousMove, this.attackTurn++);
+    this.previousMove = this.move;
+    this.enter("TELEGRAPH", WINSTH_ATTACKS[this.move].startupMs);
     this.setVelocityX(0);
   }
 

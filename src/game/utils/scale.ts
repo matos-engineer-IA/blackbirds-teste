@@ -1,4 +1,4 @@
-/** Convenção oficial: cartola e efeitos NÃO entram na altura do corpo. */
+/** Medidas de referência; escala de exibição proposta, sujeita a revisão artística. */
 export const SCALE = {
   neroMeters: 1.8,
   winsthMeters: 2.3,
@@ -6,12 +6,13 @@ export const SCALE = {
   winsthBodyPx: 184,
   neroFrame: { w: 120, h: 192 },
   winsthFrame: { w: 148, h: 236 },
+  actorRenderScale: 0.5,
   hatExcluded: true,
 } as const;
 
 export const GROUND = {
-  y: 350,
-  colliderHeight: 24,
+  y: 318,
+  colliderHeight: 42,
   worldHeight: 360,
 } as const;
 

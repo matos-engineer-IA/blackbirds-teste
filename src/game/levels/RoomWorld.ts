@@ -46,7 +46,7 @@ export class RoomWorld {
   buildCity(): void {
     this.clear();
     this.placeFloor(CITY_WIDTH);
-    const street = this.scene.add.image(0, 0, "street-operario").setOrigin(0, 0).setDepth(2);
+    const street = this.scene.add.image(0, CITY_GROUND_Y - OPERARIO_BLOCK.groundY, "street-operario").setOrigin(0, 0).setDepth(2);
     this.deco.push(street);
     CITY_SEGMENTS.forEach((segment) => {
       if (segment.id === "operario") {
@@ -79,7 +79,7 @@ export class RoomWorld {
   }
 
   nearestNpc(x: number, y: number, range = 48): Npc | undefined {
-    return this.npcs.getChildren().find((child) => {
+    return [...this.npcs.getChildren()].sort((a, b) => Math.abs((a as Npc).x - x) - Math.abs((b as Npc).x - x)).find((child) => {
       const npc = child as Npc;
       return npc.active && !npc.busy && Phaser.Math.Distance.Between(x, y, npc.x, npc.y) <= range;
     }) as Npc | undefined;
@@ -106,12 +106,12 @@ export class RoomWorld {
     floor.setScale(width / TILE, GROUND.colliderHeight / TILE);
     floor.refreshBody();
     this.cobble = this.scene.add
-      .tileSprite(0, CITY_GROUND_Y, width, 36, "cobble")
+      .tileSprite(0, CITY_GROUND_Y, width, GROUND.worldHeight - CITY_GROUND_Y, "cobble")
       .setOrigin(0, 0)
       .setDepth(4);
     this.deco.push(this.cobble);
-    const left = this.solids.create(4, CITY_HEIGHT / 2, "tiles", 1) as Phaser.Physics.Arcade.Sprite;
-    const right = this.solids.create(width - 4, CITY_HEIGHT / 2, "tiles", 1) as Phaser.Physics.Arcade.Sprite;
+    const left = this.solids.create(-TILE / 2, CITY_HEIGHT / 2, "tiles", 1) as Phaser.Physics.Arcade.Sprite;
+    const right = this.solids.create(width + TILE / 2, CITY_HEIGHT / 2, "tiles", 1) as Phaser.Physics.Arcade.Sprite;
     left.setVisible(false).setScale(1, CITY_HEIGHT / TILE).refreshBody();
     right.setVisible(false).setScale(1, CITY_HEIGHT / TILE).refreshBody();
   }
@@ -129,7 +129,8 @@ export class RoomWorld {
     const cols = def.map[0].length;
     def.map.forEach((line, row) => {
       [...line].forEach((char, col) => {
-        if (col === 0 || col === cols - 1 || row >= 12) return;
+        // Row 0 encoded the old room boundary, not a visible overhead platform.
+        if (row === 0 || col === 0 || col === cols - 1 || row >= 12) return;
         const tile = tileAt(char);
         const x = originX + col * TILE + TILE / 2;
         const y = row * TILE + TILE / 2 + yOff;
@@ -149,6 +150,7 @@ export class RoomWorld {
       const segment = CITY_SEGMENTS.find((item) => item.id === "avenida")!;
       this.cart = this.scene.physics.add.image(segment.x + 220, CITY_GROUND_Y, "carriage");
       this.cart.setImmovable(true);
+      this.cart.setScale(1.6);
       const body = this.cart.body as Phaser.Physics.Arcade.Body;
       body.allowGravity = false;
       this.cart.setVelocityX(36);

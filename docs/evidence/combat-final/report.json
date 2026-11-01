@@ -1,0 +1,205 @@
+{
+  "date": "2026-11-01T15:51:05.693Z",
+  "browser": "156.0.8078.47",
+  "results": [
+    {
+      "id": "COM-01/02/03/04",
+      "status": "passou",
+      "observed": {
+        "initialHp": 8,
+        "afterFirst": 7,
+        "afterHeld": 6,
+        "mirroredHp": 5,
+        "holdDoesNotRepeat": true
+      }
+    },
+    {
+      "id": "COM-06/07 reload atomic",
+      "status": "passou",
+      "observed": {
+        "projectileReachedTarget": true,
+        "ammoGrantedAtCompletion": true,
+        "cancelledReloadGrantedNothing": true,
+        "emptyAmmo": 0
+      }
+    },
+    {
+      "id": "BOS-GROUND",
+      "status": "passou",
+      "observed": {
+        "y": 318,
+        "bottom": 318,
+        "grounded": true
+      }
+    },
+    {
+      "id": "BOS-02/03/04/05/06 direction/recovery",
+      "status": "passou",
+      "observed": [
+        {
+          "move": "horizontal",
+          "directionLocked": true,
+          "recoveryStopsMovement": true
+        },
+        {
+          "move": "slam",
+          "directionLocked": true,
+          "recoveryStopsMovement": true
+        },
+        {
+          "move": "charge",
+          "directionLocked": true,
+          "recoveryStopsMovement": true
+        },
+        {
+          "move": "wave",
+          "directionLocked": true,
+          "recoveryStopsMovement": true
+        }
+      ]
+    },
+    {
+      "id": "BOS-05 wave hits grounded player",
+      "status": "passou",
+      "observed": {
+        "hpAfterUnavoidedWave": 4,
+        "jumpingAvoidedSameThreatInPreviousTest": true
+      }
+    },
+    {
+      "id": "BOS-RESET-0",
+      "status": "passou",
+      "observed": {
+        "hp": 5,
+        "ammo": 6,
+        "bossHp": 28,
+        "waves": 0,
+        "children": 12,
+        "bottom": 318
+      }
+    },
+    {
+      "id": "BOS-RESET-1",
+      "status": "passou",
+      "observed": {
+        "hp": 5,
+        "ammo": 6,
+        "bossHp": 28,
+        "waves": 0,
+        "children": 12,
+        "bottom": 318
+      }
+    },
+    {
+      "id": "BOS-RESET-2",
+      "status": "passou",
+      "observed": {
+        "hp": 5,
+        "ammo": 6,
+        "bossHp": 28,
+        "waves": 0,
+        "children": 12,
+        "bottom": 318
+      }
+    },
+    {
+      "id": "BOS-RESET-3",
+      "status": "passou",
+      "observed": {
+        "hp": 5,
+        "ammo": 6,
+        "bossHp": 28,
+        "waves": 0,
+        "children": 12,
+        "bottom": 318
+      }
+    },
+    {
+      "id": "BOS-RESET-4",
+      "status": "passou",
+      "observed": {
+        "hp": 5,
+        "ammo": 6,
+        "bossHp": 28,
+        "waves": 0,
+        "children": 12,
+        "bottom": 318
+      }
+    },
+    {
+      "id": "BOS-RESET-5",
+      "status": "passou",
+      "observed": {
+        "hp": 5,
+        "ammo": 6,
+        "bossHp": 28,
+        "waves": 0,
+        "children": 12,
+        "bottom": 318
+      }
+    },
+    {
+      "id": "BOS-RESET-6",
+      "status": "passou",
+      "observed": {
+        "hp": 5,
+        "ammo": 6,
+        "bossHp": 28,
+        "waves": 0,
+        "children": 12,
+        "bottom": 318
+      }
+    },
+    {
+      "id": "BOS-RESET-7",
+      "status": "passou",
+      "observed": {
+        "hp": 5,
+        "ammo": 6,
+        "bossHp": 28,
+        "waves": 0,
+        "children": 12,
+        "bottom": 318
+      }
+    },
+    {
+      "id": "BOS-RESET-8",
+      "status": "passou",
+      "observed": {
+        "hp": 5,
+        "ammo": 6,
+        "bossHp": 28,
+        "waves": 0,
+        "children": 12,
+        "bottom": 318
+      }
+    },
+    {
+      "id": "BOS-RESET-9",
+      "status": "passou",
+      "observed": {
+        "hp": 5,
+        "ammo": 6,
+        "bossHp": 28,
+        "waves": 0,
+        "children": 12,
+        "bottom": 318
+      }
+    },
+    {
+      "id": "BOS-09/10",
+      "status": "passou",
+      "observed": {
+        "activeBeforeDefeat": 1,
+        "restarts": 10,
+        "threatsClearedAfterDefeat": true,
+        "anatomicalScaleApproval": "não verificada; arte em revisão"
+      }
+    }
+  ],
+  "errors": [],
+  "limitations": [
+    "Fixtures posicionam atores para isolar combate; não são evidência de travessia.",
+    "Avisos técnicos/poses provisórias não representam animações finais nem avaliação humana de diversão."
+  ]
+}

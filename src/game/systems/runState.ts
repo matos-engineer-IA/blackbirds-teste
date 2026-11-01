@@ -6,6 +6,8 @@ export type RunSnapshot = {
   startedAt: number;
   prologueEnded: boolean;
   objective: ObjectiveId;
+  activeWalkMs: number;
+  walkDistance: number;
 };
 
 export const createRun = (now = Date.now()): RunSnapshot => ({
@@ -14,6 +16,8 @@ export const createRun = (now = Date.now()): RunSnapshot => ({
   startedAt: now,
   prologueEnded: false,
   objective: "sair-casa",
+  activeWalkMs: 0,
+  walkDistance: 0,
 });
 
 export function markTalk(run: RunSnapshot, npcId: string): RunSnapshot {
