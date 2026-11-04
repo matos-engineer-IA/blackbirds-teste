@@ -96,17 +96,16 @@ try {
       await shot(`telegraph-${move}`);
       // For direction locking, move behind via fixture only after telegraph begins.
       if (move === 'horizontal') await page.evaluate(() => { const s = window.blackBird.scene.getScene('BossArenaScene'); s.player.body.reset(620, 318); });
-      if (move === 'wave') {
-        await page.waitForTimeout(850); await page.keyboard.down('Space');
-      }
       await page.waitForFunction(() => window.blackBird.scene.getScene('BossArenaScene').boss.phase === 'ATTACK');
       const actualFacing = await page.evaluate(() => window.blackBird.scene.getScene('BossArenaScene').boss.facing);
       assert.equal(actualFacing, facing);
       if (move === 'wave') {
         const wave = await page.evaluate(() => { const w = window.blackBird.scene.getScene('BossArenaScene').waves.getChildren()[0]; return w && { y: w.y, vx: w.body.velocity.x }; });
         assert.ok(wave); assert.equal(wave.y, 308); assert.equal(wave.vx, -250);
-        await page.waitForTimeout(150); await shot('pressure-wave'); await page.keyboard.up('Space');
-        await page.waitForTimeout(350);
+        // React to the visible wave; jumping early in the telegraph lands on its trailing edge.
+        await page.keyboard.down('Space');
+        await page.waitForTimeout(150); await shot('pressure-wave'); await page.waitForTimeout(450); await page.keyboard.up('Space');
+        await page.waitForTimeout(50);
         assert.equal(await page.evaluate(() => window.blackBird.scene.getScene('BossArenaScene').player.hp), 5);
       }
       // Capture from the transition, so screenshot latency cannot skip the

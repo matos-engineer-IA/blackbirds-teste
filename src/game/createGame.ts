@@ -18,6 +18,9 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
   pixelArt: true,
   antialias: false,
   roundPixels: true,
+  // Phaser's startup smoothing clamps a 30 Hz callback to a 60 Hz delta for
+  // its cooldown period. Use real frame time; Arcade owns fixed substeps.
+  fps: { smoothStep: false },
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -26,6 +29,8 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     default: "arcade",
     arcade: {
       gravity: { x: 0, y: GAME.gravity },
+      fixedStep: true,
+      fps: 60,
       debug: false,
     },
   },
