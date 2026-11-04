@@ -3,6 +3,10 @@ import { createHash } from 'node:crypto';
 import { PNG } from 'pngjs';
 
 const characters = {
+  'nero-production-v2': { frame: [320,224], feetBoundary:208, scale:.5, status:'REVIEW', source:'art/production-v2-manifest.json', note:'14 poses; six articulated walk phases; legacy idle/jump/combat preserved with new envelope.' },
+  'winsth-production-v2': { frame: [384,288], feetBoundary:264, scale:.5, status:'REVIEW', source:'art/production-v2-manifest.json', note:'Eight articulated poses; body measurement and full animation catalogue still require artistic review.' },
+  'daughter-v2': { frame:[96,112], feetBoundary:104, scale:.55, status:'REVIEW', source:'art/production-v2-manifest.json', note:'Six poses; final name/age not decided.' },
+  ...Object.fromEntries(['ilda','worker','mechanic','guard'].map(name=>[`npc-${name}-v2`,{frame:[96,128],feetBoundary:112,scale:.8,status:'REVIEW',source:'art/production-v2-manifest.json',note:'Four distinct gait poses; no translation-only bob.'}])),
   'nero-sheet': { frame: [120, 192], status: 'REVIEW', scale: 0.5, feetBoundary: 192, source: 'art/source/nero-sheet.jpg', note: '11 poses; vários frames tocam limites laterais. Assimetria e ciclos exigem revisão.' },
   winsth: { frame: [148, 236], status: 'BLOCKOUT', scale: 0.5, feetBoundary: 235, source: 'scripts/make-gameplay-art.py', note: 'Stand-in procedimental; marreta cortada nos limites; não é animação final.' },
   'npc-ilda': { frame: [52, 88], status: 'REVIEW', scale: 0.8, feetBoundary: 88, source: 'art/source/npc-ilda.jpg', note: 'Frame 1 é só translação vertical, removido do playback.' },

@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { dampingAlpha } from "../mechanics/smoothing";
+import { getSettings } from "./settings";
 
 export class CameraRig {
   private lookAhead = 28;
@@ -18,7 +19,7 @@ export class CameraRig {
 
   look(facing: -1 | 1, deltaMs: number, locked = false): void {
     if (locked) return;
-    this.lookAhead += (facing * 42 - this.lookAhead) * dampingAlpha(deltaMs, 0.2);
+    this.lookAhead += ((getSettings().reducedMotion ? 0 : facing * 42) - this.lookAhead) * dampingAlpha(deltaMs, 0.2);
     this.camera.setFollowOffset(-this.lookAhead, 18);
     this.camera.setLerp(dampingAlpha(deltaMs, 0.14), dampingAlpha(deltaMs, 0.22));
   }

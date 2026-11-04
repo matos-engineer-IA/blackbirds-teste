@@ -1,7 +1,7 @@
 import type { RoomId } from "../systems/progress";
 import { GROUND } from "../utils/scale";
 import { OPERARIO_BLOCK } from "./paintedBlock";
-import { ROOMS, roomSize } from "./rooms";
+import { ROOMS } from "./rooms";
 import { TILE } from "./tiles";
 
 export type CitySegment = {
@@ -9,16 +9,21 @@ export type CitySegment = {
   x: number;
   width: number;
   title: string;
+  panels: string[];
 };
-
-const tiledWidth = (id: RoomId): number => roomSize(ROOMS[id]).width;
+const panels: Record<RoomId, string[]> = {
+  operario: ["worker-street-0", "worker-street-1", "worker-street-2"],
+  mercado: ["market-a-0", "market-a-1", "market-a-2", "market-b-0", "market-b-1"],
+  avenida: ["avenue-a-0", "avenue-a-1", "avenue-a-2", "avenue-b-1", "avenue-b-2"],
+  escola: ["school-a-0", "school-a-1", "school-b-0", "school-b-2", "school-b-1"],
+};
 
 export const CITY_SEGMENTS: CitySegment[] = (() => {
   const order: RoomId[] = ["operario", "mercado", "avenida", "escola"];
   let x = 0;
   return order.map((id) => {
-    const width = id === "operario" ? OPERARIO_BLOCK.width : tiledWidth(id);
-    const segment = { id, x, width, title: ROOMS[id].title };
+    const width = panels[id].length * 1536;
+    const segment = { id, x, width, title: ROOMS[id].title, panels: panels[id] };
     x += width;
     return segment;
   });
@@ -38,8 +43,8 @@ export function segmentAt(x: number): CitySegment {
 
 export function cityNpcX(id: RoomId, npc: { x?: number; col: number }): number {
   const segment = CITY_SEGMENTS.find((item) => item.id === id)!;
-  if (id === "operario" && npc.x !== undefined) return segment.x + npc.x;
-  return segment.x + npc.col * TILE + TILE / 2;
+  if (id === "operario" && npc.x !== undefined) return segment.x + (npc.x === 360 ? 360 : npc.x * 2.4);
+  return segment.x + npc.col / ROOMS[id].map[0].length * segment.width;
 }
 
 export function tileOffsetY(): number {

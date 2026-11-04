@@ -7,6 +7,7 @@ import { PLAYER } from "../utils/constants";
 import { SCALE } from "../utils/scale";
 import { sfx } from "../utils/audio";
 import { AttackTimeline, NERO_MELEE } from "../mechanics/attackTimeline";
+import { getSettings } from "../systems/settings";
 
 export type PlayerInput = {
   left: boolean;
@@ -16,6 +17,7 @@ export type PlayerInput = {
   melee: boolean;
   fire: boolean;
   reload: boolean;
+  dodgePressed?: boolean;
 };
 
 type AnimState = "idle" | "walk" | "jump" | "fall" | "land" | "melee" | "shoot" | "reload" | "hurt";
@@ -34,6 +36,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   reloadMs = 0;
   landMs = 0;
   ammo: number = PLAYER.maxAmmo;
+  reserveAmmo = 24;
+  shotSerial = 0;
   combatEnabled = false;
   locked = false;
   wasOnGround = false;
@@ -43,13 +47,20 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private jumpHeld = false;
   private meleeAction?: AttackTimeline;
   private meleeBufferMs = 0;
+  private meleeImpactPlayed = false;
+  dodgeMs = 0;
+  dodgeCooldownMs = 0;
+  private dodgeFacing: -1 | 1 = 1;
+  private shotAgeMs = Infinity;
+  private pendingShot = false;
+  private lastFootFrame: string | number = -1;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, "nero", 0);
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.setDepth(8);
-    anchorFeet(this, SCALE.neroFrame.w, SCALE.neroFrame.h, 24, 66, SCALE.actorRenderScale);
+    anchorFeet(this, SCALE.neroFrame.w, SCALE.neroFrame.h, 24, 66, SCALE.actorRenderScale, SCALE.neroFrame.footY);
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setMaxVelocity(420, 560);
     body.setCollideWorldBounds(true);
@@ -84,17 +95,28 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const grounded = this.onGround && body.velocity.y >= 0;
     if (this.meleeAction?.finished) this.meleeAction = undefined;
     this.meleeAction?.tick(dtMs);
+    if (this.meleeAction?.activeThisTick && !this.meleeImpactPlayed) {
+      this.meleeImpactPlayed = true;
+      sfx.attack();
+      if (this.meleeStep >= 3) { sfx.steam(); this.steam?.explode(6, this.x + this.facing * 18, this.y - 48); }
+    }
     this.meleeBufferMs = Math.max(0, this.meleeBufferMs - dtMs);
     this.coyoteMs = nextCoyote(grounded, this.coyoteMs, dtMs, PLAYER.coyoteMs);
     this.jumpBufferMs = nextJumpBuffer(input.jumpPressed, this.jumpBufferMs, dtMs, PLAYER.jumpBufferMs);
     this.iFrameMs = Math.max(0, this.iFrameMs - dtMs);
     this.attackMs = Math.max(0, this.attackMs - dtMs);
+    this.shotAgeMs += dtMs;
     this.attackCdMs = Math.max(0, this.attackCdMs - dtMs);
     this.comboMs = Math.max(0, this.comboMs - dtMs);
     this.fireCdMs = Math.max(0, this.fireCdMs - dtMs);
+    this.dodgeMs = Math.max(0, this.dodgeMs - dtMs);
+    this.dodgeCooldownMs = Math.max(0, this.dodgeCooldownMs - dtMs);
     const reloadBefore = this.reloadMs;
     this.reloadMs = Math.max(0, this.reloadMs - dtMs);
-    if (reloadBefore > 0 && this.reloadMs <= 0) this.ammo = PLAYER.maxAmmo;
+    if (reloadBefore > 0 && this.reloadMs <= 0) {
+      const rounds = Math.min(PLAYER.maxAmmo - this.ammo, this.reserveAmmo);
+      this.ammo += rounds; this.reserveAmmo -= rounds;
+    }
     this.landMs = Math.max(0, this.landMs - dtMs);
     this.shadow.setPosition(this.x, this.y + 1).setVisible(grounded);
 
@@ -108,6 +130,17 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       return;
     }
 
+    if (this.combatEnabled && input.dodgePressed && this.dodgeCooldownMs <= 0 && this.attackMs <= 0 && grounded) {
+      this.dodgeMs = 300; this.dodgeCooldownMs = 650; this.dodgeFacing = this.facing;
+      this.reloadMs = 0; this.meleeAction = undefined; this.meleeBufferMs = 0;
+      sfx.steam();
+    }
+    if (this.dodgeMs > 0) {
+      body.setVelocityX(this.dodgeMs > 100 ? this.dodgeFacing * 420 : 0);
+      this.setAnim("jump");
+      return;
+    }
+
     const dir: -1 | 0 | 1 = input.left ? -1 : input.right ? 1 : 0;
     if (dir !== 0 && this.attackMs <= 0) this.facing = dir;
     const speed = this.attackMs > 0 ? PLAYER.walkSpeed * 0.35 : PLAYER.walkSpeed;
@@ -117,6 +150,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       body.setVelocityY(-PLAYER.jumpVelocity);
       this.coyoteMs = 0;
       this.jumpBufferMs = 0;
+      if (!input.jump) body.setVelocityY(-PLAYER.jumpVelocity * PLAYER.jumpCut);
       sfx.jump();
     } else if (this.jumpHeld && !input.jump) {
       body.setVelocityY(cutJump(body.velocity.y, false, PLAYER.jumpCut));
@@ -129,28 +163,31 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.meleeBufferMs = 0;
       this.meleeStep = nextMeleeStep(this.meleeStep, this.comboMs > 0);
       this.meleeAction = new AttackTimeline(NERO_MELEE[this.meleeStep - 1], this.facing);
+      this.meleeImpactPlayed = false;
       this.attackMs = this.meleeAction.durationMs;
       this.attackCdMs = this.attackMs;
       this.comboMs = this.attackMs + PLAYER.meleeComboWindowMs;
-      sfx.attack();
-      if (this.meleeStep >= 3) {
-        sfx.steam();
-        this.steam?.explode(6, this.x + this.facing * 18, this.y - 48);
-      }
     }
 
-    if (this.combatEnabled && input.reload && this.attackMs <= 0 && this.reloadMs <= 0 && this.ammo < PLAYER.maxAmmo) {
+    if (this.combatEnabled && input.reload && this.attackMs <= 0 && this.reloadMs <= 0 && this.ammo < PLAYER.maxAmmo && this.reserveAmmo > 0) {
       this.reloadMs = PLAYER.reloadMs;
       sfx.reload();
     }
 
     if (this.combatEnabled && input.fire && this.attackMs <= 0 && canFire(this.ammo, this.fireCdMs, this.reloadMs > 0)) {
-      this.ammo = afterShot(this.ammo);
+      this.shotAgeMs = 0;
+      this.pendingShot = true;
+      this.attackMs = 260;
       this.fireCdMs = PLAYER.revolverCooldownMs;
-      this.attackMs = 140;
+    }
+    // Commit ammunition, projectile, sound and recoil at the same active frame.
+    if (this.pendingShot && this.shotAgeMs >= 60) {
+      this.pendingShot = false;
+      this.ammo = afterShot(this.ammo);
+      this.shotSerial++;
       body.setVelocityX(body.velocity.x - this.facing * PLAYER.revolverRecoil);
       sfx.shot();
-      this.scene.cameras.main.shake(40, 0.0012);
+      if (!getSettings().reducedMotion) this.scene.cameras.main.shake(40, 0.0012);
     }
 
     if (grounded && !this.wasOnGround && body.velocity.y >= 0) {
@@ -160,18 +197,24 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.wasOnGround = grounded;
     this.setFlipX(this.facing < 0);
     this.refreshAnim();
-    this.setAlpha(this.iFrameMs > 0 && Math.floor(this.iFrameMs / 80) % 2 === 0 ? 0.45 : 1);
+    const frame = this.frame.name;
+    if (grounded && this.animState === "walk" && frame !== this.lastFootFrame && [2, 5].includes(Number(frame))) sfx.step();
+    this.lastFootFrame = frame;
+    this.setAlpha(this.iFrameMs > 0 ? getSettings().reducedFlashes ? 0.75 : Math.floor(this.iFrameMs / 80) % 2 === 0 ? 0.45 : 1 : 1);
   }
 
   takeHit(fromX: number): boolean {
-    const next = applyDamage(this.hp, 1, this.iFrameMs > 0);
+    const next = applyDamage(this.hp, 1, this.iFrameMs > 0 || (this.dodgeMs <= 220 && this.dodgeMs > 90));
     if (next === this.hp) return false;
     this.hp = next;
-    this.iFrameMs = PLAYER.iFrameMs;
+    this.iFrameMs = PLAYER.iFrameMs * (getSettings().combatAssist ? 1.5 : 1);
+    this.dodgeMs = 0;
     this.reloadMs = 0;
     this.meleeAction = undefined;
     this.meleeBufferMs = 0;
     this.attackMs = 0;
+    this.pendingShot = false;
+    this.shotAgeMs = Infinity;
     if (this.hp <= 0) this.locked = true;
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setVelocity((this.x < fromX ? -1 : 1) * PLAYER.knockbackX, -PLAYER.knockbackY);
@@ -197,9 +240,14 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   private refreshAnim(): void {
+    if (this.shotAgeMs < 260) {
+      this.anims.stop();
+      this.setFrame(this.shotAgeMs >= 60 && this.shotAgeMs < 120 ? 13 : 12);
+      return;
+    }
     if (this.meleeAction && this.attackMs > 0) {
       this.anims.stop();
-      this.setFrame(this.meleeAction.elapsedMs < this.meleeAction.definition.startupMs ? 7 : 8);
+      this.setFrame(this.meleeAction.elapsedMs < this.meleeAction.definition.startupMs ? 10 : 11);
       return;
     }
     if (this.iFrameMs > 750) {
@@ -211,7 +259,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       return;
     }
     if (this.attacking) {
-      this.setAnim(this.fireCdMs > PLAYER.revolverCooldownMs - 90 ? "shoot" : "melee");
+      this.setAnim("melee");
       return;
     }
     if (!this.onGround) {

@@ -1,6 +1,7 @@
 :root {
   --bg: #0c0a08;
   --text: #efe4d0;
+  --game-text-scale: 1;
 }
 
 * {
@@ -23,3 +24,23 @@ body,
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }
+
+.game-settings { width: min(660px, 94vw); max-height: 90dvh; overflow-y: auto; color: #efe4d0; background: #171510; border: 1px solid #927646; padding: 24px; font: calc(16px * var(--game-text-scale)) / 1.5 Georgia, serif; box-shadow: 0 24px 100px #000b; }
+.game-settings::backdrop { background: #090a0de0; }
+.game-settings header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.game-settings h2 { margin: 0; color: #dfbd79; font-size: 1.5em; font-weight: 400; }
+.game-settings fieldset { border: 1px solid #685b40; margin: 24px 0; padding: 16px; }
+.game-settings legend { padding: 0 8px; color: #cbae72; }
+.game-settings button { color: #f2dfb6; background: #30291f; border: 1px solid #9e8150; padding: 8px 12px; font: inherit; cursor: pointer; }
+.game-settings button:hover { background: #51402b; }
+.game-settings :focus-visible { outline: 3px solid #f0cb7a; outline-offset: 3px; }
+.settings-row { display: grid; grid-template-columns: 1fr 1.2fr 4em; align-items: center; gap: 12px; margin: 12px 0; }
+.settings-row input { min-width: 0; width: 100%; accent-color: #c2a56b; }
+.settings-toggle { display: flex; align-items: center; gap: 10px; margin: 12px 0; }
+.settings-toggle input { width: 20px; height: 20px; accent-color: #c2a56b; }
+.settings-binding { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin: 10px 0; }
+.game-settings footer { display: flex; flex-wrap: wrap; gap: 12px; }
+.settings-status { min-height: 1.5em; color: #d6c19b; }
+#game-caption { position: fixed; left: 50%; bottom: 8%; transform: translateX(-50%); max-width: min(650px, 90vw); padding: 8px 16px; background: #090a0df0; color: #fff0cd; border: 1px solid #8f7444; font: calc(18px * var(--game-text-scale)) / 1.45 Georgia, serif; text-align: center; pointer-events: none; z-index: 5; }
+#game-caption:empty { display: none; }
+@media (max-width: 600px) { .game-settings { padding: 14px; } .settings-row { grid-template-columns: 1fr 1fr 3em; gap: 8px; } }

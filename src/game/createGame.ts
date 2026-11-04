@@ -7,6 +7,7 @@ import { GameScene } from "./scenes/GameScene";
 import { MenuScene } from "./scenes/MenuScene";
 import { UIScene } from "./scenes/UIScene";
 import { GAME } from "./utils/constants";
+import { installCaptions, pauseAudio } from "./utils/audio";
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -33,6 +34,9 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
 
 export function startGame(parent: string): Phaser.Game {
   const game = new Phaser.Game({ ...gameConfig, parent });
+  const clearCaptions = installCaptions();
+  game.events.on(Phaser.Core.Events.BLUR, pauseAudio).on(Phaser.Core.Events.HIDDEN, pauseAudio);
+  game.events.once(Phaser.Core.Events.DESTROY, () => { clearCaptions(); game.events.off(Phaser.Core.Events.BLUR, pauseAudio).off(Phaser.Core.Events.HIDDEN, pauseAudio); });
   (window as Window & { blackBird?: Phaser.Game }).blackBird = game;
   return game;
 }

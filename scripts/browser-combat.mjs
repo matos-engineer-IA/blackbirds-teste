@@ -15,7 +15,7 @@ const tap = key => page.keyboard.press(key, { delay: 70 });
 const shot = name => page.screenshot({ path: path.join(output, `${name}.png`) });
 const arena = () => page.evaluate(() => {
   const s = window.blackBird.scene.getScene('ArenaScene');
-  return { ammo: s.player.ammo, reloading: s.player.reloadMs, hp: s.dummies.getChildren()[0]?.hp, step: s.player.meleeStep };
+  return { ammo: s.player.ammo, reserve: s.player.reserveAmmo, reloading: s.player.reloadMs, hp: s.dummies.getChildren()[0]?.hp, step: s.player.meleeStep };
 });
 async function check(id, run) { const observed = await run(); results.push({ id, status: 'passou', observed }); console.log(`PASS ${id}`, JSON.stringify(observed)); }
 const report = { date: new Date().toISOString(), browser: browser.version(), results, errors, limitations: ['Fixtures posicionam atores para isolar combate; não são evidência de travessia.', 'Avisos técnicos/poses provisórias não representam animações finais nem avaliação humana de diversão.'] };
@@ -39,18 +39,39 @@ try {
     return { initialHp: before.hp, afterFirst: after.hp, afterHeld: held.hp, mirroredHp: mirrored.hp, holdDoesNotRepeat: true };
   });
   await check('COM-06/07 reload atomic', async () => {
-    await page.evaluate(() => { const s = window.blackBird.scene.getScene('ArenaScene'); s.player.body.reset(120, 318); s.player.facing = 1; });
+    await page.evaluate(() => { const s = window.blackBird.scene.getScene('ArenaScene'); s.player.body.reset(120, 318); s.player.facing = 1; s.dummies.getChildren().forEach(d=>d.hp=30); });
     const hpBefore = (await arena()).hp;
     await tap('k'); await page.waitForTimeout(420); const shotState = await arena(); assert.equal(shotState.ammo, 5);
     await page.waitForTimeout(100); assert.equal((await arena()).hp, hpBefore - 1);
     await tap('r'); await page.waitForTimeout(180); const loading = await arena(); assert.ok(loading.reloading > 0); assert.equal(loading.ammo, 5);
-    await tap('j'); await page.waitForTimeout(1100); assert.equal((await arena()).ammo, 5);
-    await tap('r'); await page.waitForTimeout(1000); assert.equal((await arena()).ammo, 6);
+    await tap('j'); await page.waitForTimeout(1100); assert.equal((await arena()).ammo, 5); assert.equal((await arena()).reserve,24);
+    await tap('r'); await page.waitForTimeout(1000); assert.equal((await arena()).ammo, 6); assert.equal((await arena()).reserve,23);
     for (let i = 0; i < 7; i++) { await tap('k'); await page.waitForTimeout(350); }
     assert.equal((await arena()).ammo, 0); await shot('empty-revolver');
     return { projectileReachedTarget: true, ammoGrantedAtCompletion: true, cancelledReloadGrantedNothing: true, emptyAmmo: 0 };
   });
-  await tap('Escape'); await page.waitForTimeout(200); await tap('ArrowDown'); await tap('ArrowDown'); await tap('Enter');
+  await check('COM muzzle sweep and dodge', async () => {
+    await page.evaluate(() => { const s=window.blackBird.scene.getScene('ArenaScene');s.player.ammo=6;s.player.fireCdMs=0;s.player.body.reset(230,318);s.player.facing=1; });
+    const before=await arena();await tap('k');await page.waitForTimeout(220);assert.equal((await arena()).hp,before.hp-1);
+    await page.waitForTimeout(200);await page.evaluate(() => {const s=window.blackBird.scene.getScene('ArenaScene');s.player.body.reset(330,318);s.player.facing=-1;});
+    await tap('k');await page.waitForTimeout(220);assert.equal((await arena()).hp,before.hp-2);
+    await page.waitForTimeout(200);await page.evaluate(() => {const s=window.blackBird.scene.getScene('ArenaScene');s.player.body.reset(120,318);s.player.hp=5;s.player.iFrameMs=0;});
+    await tap('Shift');await page.waitForTimeout(40);
+    const protectedHit=await page.evaluate(()=>window.blackBird.scene.getScene('ArenaScene').player.takeHit(0));assert.equal(protectedHit,false);
+    await page.waitForTimeout(350);const exposedHit=await page.evaluate(()=>window.blackBird.scene.getScene('ArenaScene').player.takeHit(0));assert.equal(exposedHit,true);
+    await shot('dodge-recovery');return {closeShotBothDirections:true,atomicRounds:true,dodgeWindowProtected:true,recoveryVulnerable:true};
+  });
+  await check('Arena pause/settings/focus', async () => {
+    await page.keyboard.down('d');await page.waitForTimeout(300);await tap('Escape');
+    const before=await page.evaluate(()=>window.blackBird.scene.getScene('ArenaScene').player.x);await page.waitForTimeout(400);assert.equal(await page.evaluate(()=>window.blackBird.scene.getScene('ArenaScene').player.x),before);await page.keyboard.up('d');
+    await page.getByRole('button',{name:'Configurações',exact:true}).click();await page.getByRole('button',{name:'Voltar',exact:true}).click();
+    await page.getByRole('button',{name:'Continuar',exact:true}).click();await page.waitForTimeout(150);
+    await page.evaluate(()=>window.dispatchEvent(new Event('blur')));await page.getByRole('dialog').waitFor();await page.evaluate(()=>window.dispatchEvent(new Event('focus')));await page.getByRole('button',{name:'Continuar',exact:true}).click();
+    return {frozen:true,settingsReturned:true,syntheticBlurPaused:true};
+  });
+  await tap('Escape'); await page.getByRole('button', {name:'Menu',exact:true}).click();
+  await page.waitForFunction(() => window.blackBird.scene.isActive('MenuScene'));
+  await tap('ArrowDown'); await tap('ArrowDown'); await tap('Enter');
   await page.waitForFunction(() => window.blackBird.scene.isActive('BossArenaScene'));
   await check('BOS-GROUND', async () => {
     await page.waitForTimeout(3000);
@@ -60,12 +81,13 @@ try {
   });
   await check('BOS-02/03/04/05/06 direction/recovery', async () => {
     const observed = [];
+    await page.evaluate(()=>{const s=window.blackBird.scene.getScene('BossArenaScene');s.__recovery=[];s.events.on('postupdate',()=>{if(s.boss.phase==='RECOVERY')s.__recovery.push({x:s.boss.x,vx:s.boss.body.velocity.x,time:s.time.now,remaining:s.boss.phaseMs})});});
     for (const [index, move] of ['horizontal', 'slam', 'charge', 'wave'].entries()) {
       await page.evaluate(move => {
         const s = window.blackBird.scene.getScene('BossArenaScene');
         s.player.body.reset(400, 318); s.player.hp = 5; s.player.locked = false; s.player.iFrameMs = 0;
         s.boss.body.reset(540, 318); s.boss.phase = 'AGGRO'; s.boss.cooldownMs = 0; s.boss.phaseMs = 0; s.boss.forcedMove = move;
-        s.waves.clear(true, true);
+        s.waves.clear(true, true);s.__recovery=[];
       }, move);
       await tap(String(index + 1));
       await page.waitForFunction(move => { const s = window.blackBird.scene.getScene('BossArenaScene'); return s.boss.phase === 'TELEGRAPH' && s.boss.move === move; }, move);
@@ -87,11 +109,12 @@ try {
         await page.waitForTimeout(350);
         assert.equal(await page.evaluate(() => window.blackBird.scene.getScene('BossArenaScene').player.hp), 5);
       }
-      await page.waitForFunction(() => window.blackBird.scene.getScene('BossArenaScene').boss.phase === 'RECOVERY');
-      const start = await page.evaluate(() => window.blackBird.scene.getScene('BossArenaScene').boss.x);
-      await page.waitForTimeout(250);
-      const recovered = await page.evaluate(() => { const s = window.blackBird.scene.getScene('BossArenaScene'); return { phase: s.boss.phase, x: s.boss.x }; });
-      assert.equal(recovered.phase, 'RECOVERY'); assert.ok(Math.abs(recovered.x - start) < 1);
+      // Capture from the transition, so screenshot latency cannot skip the
+      // early part of recovery and make a valid 900 ms phase look too short.
+      await page.waitForFunction(()=>{const r=window.blackBird.scene.getScene('BossArenaScene').__recovery;return r.length>1&&r.at(-1).time-r[0].time>=250;});
+      const recovered=await page.evaluate(()=>window.blackBird.scene.getScene('BossArenaScene').__recovery);
+      assert.ok(recovered.every(r=>Math.abs(r.vx)<.01));assert.ok(Math.max(...recovered.map(r=>r.x))-Math.min(...recovered.map(r=>r.x))<1);
+      assert.ok(recovered[0].remaining >= [650,900,700,900][index]-60);
       observed.push({ move, directionLocked: true, recoveryStopsMovement: true });
     }
     return observed;
@@ -119,6 +142,7 @@ try {
     await page.evaluate(() => { const s = window.blackBird.scene.getScene('BossArenaScene'); s.boss.phase = 'RECOVERY'; s.boss.hp = 1; s.boss.hit(1, s.player.x); });
     await page.waitForTimeout(200);
     assert.equal(await page.evaluate(() => window.blackBird.scene.getScene('BossArenaScene').waves.countActive()), 0);
+    await page.getByRole('button', {name:'Reiniciar arena',exact:true}).click();
     for (let i = 0; i < 10; i++) {
       await tap('F5'); await page.waitForTimeout(250);
       const reset = await page.evaluate(() => { const s = window.blackBird.scene.getScene('BossArenaScene'); return { hp: s.player.hp, ammo: s.player.ammo, bossHp: s.boss.hp, waves: s.waves.countActive(), children: s.children.length, bottom: s.boss.body.bottom }; });

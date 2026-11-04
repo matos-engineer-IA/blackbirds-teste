@@ -48,7 +48,7 @@ async function check(id, run) {
     throw error;
   }
 }
-async function walkTo(x, timeout = 80000) {
+async function walkTo(x, timeout = 230000) {
   const current = await state();
   const right = x > current.x;
   await page.keyboard.down(right ? 'd' : 'a');
@@ -140,11 +140,11 @@ try {
   await check('CAM-01/02/03/05/10; PHY-02; NAR-03', async () => {
     const geometry = await page.evaluate(async () => {
       const s = window.blackBird.scene.getScene('GameScene');
-      return { width: s.physics.world.bounds.width, regions: ['operario', 'mercado', 'avenida', 'escola'] };
+      return { width: s.physics.world.bounds.width, markers: [1000, 6000, 15000, 25000, s.physics.world.bounds.width - 20] };
     });
-    for (const x of [2200, 4300, 6500, geometry.width - 20]) { await walkTo(x); await shot(`region-${(await state()).room}`); }
-    const far = await state(); assert.equal(far.room, 'escola');
-    await walkTo(25, 90000); const back = await state();
+    for (const x of geometry.markers) { await walkTo(x); await shot(`region-${(await state()).room}`); }
+    const far = await state(); assert.equal(far.room, 'escola'); assert.ok(far.run.activeWalkMs >= 180000, 'Outbound normal-speed route must exceed 180 active seconds');
+    await walkTo(25, 230000); const back = await state();
     assert.equal(back.room, 'operario'); assert.equal(back.scrollX, 0); assert.ok(back.grounded); await shot('returned');
     return { farX: far.x, farCamera: far.scrollX, returnedX: back.x, activeWalkSeconds: back.run.activeWalkMs / 1000, outboundActiveSeconds: far.run.activeWalkMs / 1000, distance: back.run.walkDistance };
   });

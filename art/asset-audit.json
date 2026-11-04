@@ -78,6 +78,31 @@
       ]
     },
     {
+      "id": "characters/carriage-v2",
+      "path": "assets/characters/carriage-v2.png",
+      "width": 416,
+      "height": 256,
+      "bytes": 70976,
+      "sha256": "47ef0a6f8f9beed881dbe19cbef1090996a94e925deefee164838bca89f1a1d2",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            19,
+            32,
+            398,
+            248
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        }
+      ]
+    },
+    {
       "id": "characters/carriage",
       "path": "assets/characters/carriage.png",
       "width": 48,
@@ -98,6 +123,98 @@
             26
           ],
           "translucentPixels": 24,
+          "touchesSide": false
+        }
+      ]
+    },
+    {
+      "id": "characters/daughter-v2",
+      "path": "assets/characters/daughter-v2.png",
+      "width": 576,
+      "height": 112,
+      "bytes": 23776,
+      "sha256": "4da07020515ca3babc3348c5e4aa2bed491069cffffc17acb384a6c07a4b5529",
+      "status": "REVIEW",
+      "source": "art/production-v2-manifest.json",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frame": [
+        96,
+        112
+      ],
+      "feetBoundary": 104,
+      "scale": 0.55,
+      "note": "Six poses; final name/age not decided.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            33,
+            16,
+            65,
+            104
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 96,
+          "y": 0,
+          "opaqueBounds": [
+            26,
+            16,
+            65,
+            104
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 192,
+          "y": 0,
+          "opaqueBounds": [
+            29,
+            22,
+            82,
+            104
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 288,
+          "y": 0,
+          "opaqueBounds": [
+            20,
+            23,
+            75,
+            104
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 384,
+          "y": 0,
+          "opaqueBounds": [
+            22,
+            23,
+            71,
+            104
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 480,
+          "y": 0,
+          "opaqueBounds": [
+            16,
+            26,
+            80,
+            104
+          ],
+          "translucentPixels": 0,
           "touchesSide": false
         }
       ]
@@ -138,6 +255,194 @@
             5,
             14,
             25
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        }
+      ]
+    },
+    {
+      "id": "characters/nero-production-v2",
+      "path": "assets/characters/nero-production-v2.png",
+      "width": 4480,
+      "height": 224,
+      "bytes": 221748,
+      "sha256": "adb84f3097eeddf7d41c4308777cf819dbba9ecc3dfa03d54dd300f8f10a56a1",
+      "status": "REVIEW",
+      "source": "art/production-v2-manifest.json",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frame": [
+        320,
+        224
+      ],
+      "feetBoundary": 208,
+      "scale": 0.5,
+      "note": "14 poses; six articulated walk phases; legacy idle/jump/combat preserved with new envelope.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            112,
+            39,
+            198,
+            208
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 320,
+          "y": 0,
+          "opaqueBounds": [
+            116,
+            38,
+            199,
+            208
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 640,
+          "y": 0,
+          "opaqueBounds": [
+            87,
+            45,
+            223,
+            208
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 960,
+          "y": 0,
+          "opaqueBounds": [
+            95,
+            46,
+            204,
+            208
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 1280,
+          "y": 0,
+          "opaqueBounds": [
+            92,
+            46,
+            219,
+            208
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 1600,
+          "y": 0,
+          "opaqueBounds": [
+            83,
+            47,
+            232,
+            208
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 1920,
+          "y": 0,
+          "opaqueBounds": [
+            88,
+            47,
+            200,
+            208
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 2240,
+          "y": 0,
+          "opaqueBounds": [
+            76,
+            48,
+            215,
+            208
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 2560,
+          "y": 0,
+          "opaqueBounds": [
+            73,
+            44,
+            223,
+            208
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 2880,
+          "y": 0,
+          "opaqueBounds": [
+            78,
+            58,
+            218,
+            209
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 3200,
+          "y": 0,
+          "opaqueBounds": [
+            62,
+            55,
+            264,
+            208
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 3520,
+          "y": 0,
+          "opaqueBounds": [
+            54,
+            43,
+            264,
+            208
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 3840,
+          "y": 0,
+          "opaqueBounds": [
+            105,
+            53,
+            309,
+            208
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 4160,
+          "y": 0,
+          "opaqueBounds": [
+            100,
+            51,
+            313,
+            209
           ],
           "translucentPixels": 0,
           "touchesSide": false
@@ -341,6 +646,142 @@
       ]
     },
     {
+      "id": "characters/npc-guard-v2",
+      "path": "assets/characters/npc-guard-v2.png",
+      "width": 384,
+      "height": 128,
+      "bytes": 15090,
+      "sha256": "d1b53ef0a86b2037c1fa39f37572e547d2f1bd1a7d3c2545ebbed4380d1acd7a",
+      "status": "REVIEW",
+      "source": "art/production-v2-manifest.json",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frame": [
+        96,
+        128
+      ],
+      "feetBoundary": 112,
+      "scale": 0.8,
+      "note": "Four distinct gait poses; no translation-only bob.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            23,
+            24,
+            83,
+            112
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 96,
+          "y": 0,
+          "opaqueBounds": [
+            29,
+            23,
+            58,
+            112
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 192,
+          "y": 0,
+          "opaqueBounds": [
+            23,
+            23,
+            85,
+            112
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 288,
+          "y": 0,
+          "opaqueBounds": [
+            31,
+            23,
+            65,
+            112
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        }
+      ]
+    },
+    {
+      "id": "characters/npc-ilda-v2",
+      "path": "assets/characters/npc-ilda-v2.png",
+      "width": 384,
+      "height": 128,
+      "bytes": 18836,
+      "sha256": "18a5f96b38016a903bcdac108cda597cf561bb6e8b265f68fb3a7f16676719bd",
+      "status": "REVIEW",
+      "source": "art/production-v2-manifest.json",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frame": [
+        96,
+        128
+      ],
+      "feetBoundary": 112,
+      "scale": 0.8,
+      "note": "Four distinct gait poses; no translation-only bob.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            23,
+            25,
+            83,
+            112
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 96,
+          "y": 0,
+          "opaqueBounds": [
+            32,
+            25,
+            64,
+            112
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 192,
+          "y": 0,
+          "opaqueBounds": [
+            22,
+            26,
+            83,
+            112
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 288,
+          "y": 0,
+          "opaqueBounds": [
+            31,
+            25,
+            66,
+            112
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        }
+      ]
+    },
+    {
       "id": "characters/npc-ilda",
       "path": "assets/characters/npc-ilda.png",
       "width": 104,
@@ -385,6 +826,74 @@
       ]
     },
     {
+      "id": "characters/npc-mechanic-v2",
+      "path": "assets/characters/npc-mechanic-v2.png",
+      "width": 384,
+      "height": 128,
+      "bytes": 16493,
+      "sha256": "509db07587cc9a8a14fb44c9207e3364f6ed46083c3efa996d3d435e37b569e5",
+      "status": "REVIEW",
+      "source": "art/production-v2-manifest.json",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frame": [
+        96,
+        128
+      ],
+      "feetBoundary": 112,
+      "scale": 0.8,
+      "note": "Four distinct gait poses; no translation-only bob.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            23,
+            25,
+            85,
+            112
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 96,
+          "y": 0,
+          "opaqueBounds": [
+            31,
+            25,
+            61,
+            112
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 192,
+          "y": 0,
+          "opaqueBounds": [
+            22,
+            25,
+            84,
+            112
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 288,
+          "y": 0,
+          "opaqueBounds": [
+            32,
+            25,
+            66,
+            112
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        }
+      ]
+    },
+    {
       "id": "characters/npc-mechanic",
       "path": "assets/characters/npc-mechanic.png",
       "width": 104,
@@ -424,6 +933,74 @@
             87
           ],
           "translucentPixels": 57,
+          "touchesSide": false
+        }
+      ]
+    },
+    {
+      "id": "characters/npc-worker-v2",
+      "path": "assets/characters/npc-worker-v2.png",
+      "width": 384,
+      "height": 128,
+      "bytes": 15168,
+      "sha256": "1b8a0f26468f6649dd9a088a0f96fc010f1bcb852fefcd81a12769ce8882b966",
+      "status": "REVIEW",
+      "source": "art/production-v2-manifest.json",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frame": [
+        96,
+        128
+      ],
+      "feetBoundary": 112,
+      "scale": 0.8,
+      "note": "Four distinct gait poses; no translation-only bob.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            23,
+            25,
+            83,
+            112
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 96,
+          "y": 0,
+          "opaqueBounds": [
+            31,
+            25,
+            60,
+            112
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 192,
+          "y": 0,
+          "opaqueBounds": [
+            22,
+            25,
+            84,
+            112
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 288,
+          "y": 0,
+          "opaqueBounds": [
+            32,
+            25,
+            63,
+            112
+          ],
+          "translucentPixels": 0,
           "touchesSide": false
         }
       ]
@@ -518,6 +1095,122 @@
             120
           ],
           "translucentPixels": 2092,
+          "touchesSide": false
+        }
+      ]
+    },
+    {
+      "id": "characters/winsth-production-v2",
+      "path": "assets/characters/winsth-production-v2.png",
+      "width": 3072,
+      "height": 288,
+      "bytes": 245120,
+      "sha256": "1b16718e839ff2cb01c87e321932ac30a71c057fd2c47f7411c75932904befb8",
+      "status": "REVIEW",
+      "source": "art/production-v2-manifest.json",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frame": [
+        384,
+        288
+      ],
+      "feetBoundary": 264,
+      "scale": 0.5,
+      "note": "Eight articulated poses; body measurement and full animation catalogue still require artistic review.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            105,
+            56,
+            303,
+            268
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 384,
+          "y": 0,
+          "opaqueBounds": [
+            112,
+            57,
+            303,
+            269
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 768,
+          "y": 0,
+          "opaqueBounds": [
+            111,
+            73,
+            289,
+            264
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 1152,
+          "y": 0,
+          "opaqueBounds": [
+            141,
+            73,
+            315,
+            264
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 1536,
+          "y": 0,
+          "opaqueBounds": [
+            91,
+            54,
+            260,
+            263
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 1920,
+          "y": 0,
+          "opaqueBounds": [
+            109,
+            106,
+            377,
+            263
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 2304,
+          "y": 0,
+          "opaqueBounds": [
+            109,
+            97,
+            300,
+            267
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        },
+        {
+          "x": 2688,
+          "y": 0,
+          "opaqueBounds": [
+            110,
+            71,
+            327,
+            263
+          ],
+          "translucentPixels": 0,
           "touchesSide": false
         }
       ]
@@ -839,6 +1532,506 @@
       ]
     },
     {
+      "id": "painted/avenue-a-0",
+      "path": "assets/painted/avenue-a-0.png",
+      "width": 1536,
+      "height": 333,
+      "bytes": 520500,
+      "sha256": "c56a95405897b96674a7f07349e81484f63fa487eedab539e4fcc32fb11d66a3",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            0,
+            0,
+            1536,
+            333
+          ],
+          "translucentPixels": 0,
+          "touchesSide": true
+        }
+      ]
+    },
+    {
+      "id": "painted/avenue-a-1",
+      "path": "assets/painted/avenue-a-1.png",
+      "width": 1536,
+      "height": 315,
+      "bytes": 477728,
+      "sha256": "cc2a0b5a72a5aed5b44439e81d4de8eb5951d364d17b751be9e08c3a8f63e10b",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            0,
+            0,
+            1536,
+            315
+          ],
+          "translucentPixels": 0,
+          "touchesSide": true
+        }
+      ]
+    },
+    {
+      "id": "painted/avenue-a-2",
+      "path": "assets/painted/avenue-a-2.png",
+      "width": 1536,
+      "height": 322,
+      "bytes": 525481,
+      "sha256": "b7163012f3da4cf35f668c0ce2a5d23c0a6f147334cee887e046749f7441505f",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            0,
+            6,
+            1536,
+            322
+          ],
+          "translucentPixels": 0,
+          "touchesSide": true
+        }
+      ]
+    },
+    {
+      "id": "painted/avenue-b-0",
+      "path": "assets/painted/avenue-b-0.png",
+      "width": 1536,
+      "height": 339,
+      "bytes": 512469,
+      "sha256": "e938ece44e73c48c414f2fc93e29320b8b14e45119e6843879ac32b7d1643e00",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            0,
+            0,
+            1536,
+            339
+          ],
+          "translucentPixels": 0,
+          "touchesSide": true
+        }
+      ]
+    },
+    {
+      "id": "painted/avenue-b-1",
+      "path": "assets/painted/avenue-b-1.png",
+      "width": 1536,
+      "height": 304,
+      "bytes": 513192,
+      "sha256": "231f0f06ce34f4a6c77080610822577d9a02f5de3560551f87b07ace4c89579b",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            0,
+            0,
+            1536,
+            304
+          ],
+          "translucentPixels": 0,
+          "touchesSide": true
+        }
+      ]
+    },
+    {
+      "id": "painted/avenue-b-2",
+      "path": "assets/painted/avenue-b-2.png",
+      "width": 1536,
+      "height": 321,
+      "bytes": 517361,
+      "sha256": "2c751a02ea07cc1f321fb22d828804f538dcc82a416b76c30fecbf95b712cd05",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            0,
+            0,
+            1536,
+            321
+          ],
+          "translucentPixels": 0,
+          "touchesSide": true
+        }
+      ]
+    },
+    {
+      "id": "painted/door-leaf-v2",
+      "path": "assets/painted/door-leaf-v2.png",
+      "width": 60,
+      "height": 90,
+      "bytes": 10449,
+      "sha256": "1fc13dc42d90a5953a021e97c9411481b7624961acd89b7e05ddc48a37fbe56e",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            0,
+            0,
+            60,
+            90
+          ],
+          "translucentPixels": 5400,
+          "touchesSide": true
+        }
+      ]
+    },
+    {
+      "id": "painted/market-a-0",
+      "path": "assets/painted/market-a-0.png",
+      "width": 1536,
+      "height": 358,
+      "bytes": 480024,
+      "sha256": "da205b6370d73bb264a040f1ea9896e4735db3f8d9893a3c5a96f886c4287e62",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            0,
+            0,
+            1536,
+            358
+          ],
+          "translucentPixels": 0,
+          "touchesSide": true
+        }
+      ]
+    },
+    {
+      "id": "painted/market-a-1",
+      "path": "assets/painted/market-a-1.png",
+      "width": 1536,
+      "height": 303,
+      "bytes": 520675,
+      "sha256": "2f30035b647c0ff0bdb3c47e62b07f0a9bed2d9f3a70326c7606e03ffac730a9",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            0,
+            8,
+            1535,
+            303
+          ],
+          "translucentPixels": 0,
+          "touchesSide": true
+        }
+      ]
+    },
+    {
+      "id": "painted/market-a-2",
+      "path": "assets/painted/market-a-2.png",
+      "width": 1536,
+      "height": 303,
+      "bytes": 469541,
+      "sha256": "dfa650d9e93c86fc99936abddca496a6724aa184cf4124d8938ee89041b9c45b",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            0,
+            0,
+            1535,
+            303
+          ],
+          "translucentPixels": 0,
+          "touchesSide": true
+        }
+      ]
+    },
+    {
+      "id": "painted/market-b-0",
+      "path": "assets/painted/market-b-0.png",
+      "width": 1536,
+      "height": 324,
+      "bytes": 415739,
+      "sha256": "2bcacc4987eff627f442a83d8feb9595a15a5d85ea190e90ae4e9b2933b58f39",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            7,
+            6,
+            1535,
+            323
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        }
+      ]
+    },
+    {
+      "id": "painted/market-b-1",
+      "path": "assets/painted/market-b-1.png",
+      "width": 1536,
+      "height": 311,
+      "bytes": 464885,
+      "sha256": "c8433fe34ea3bb2b55fdf20b45f946da7c7e5a16a625f2977683fcb42fbbd95d",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            8,
+            3,
+            1535,
+            310
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        }
+      ]
+    },
+    {
+      "id": "painted/market-b-2",
+      "path": "assets/painted/market-b-2.png",
+      "width": 1536,
+      "height": 338,
+      "bytes": 535842,
+      "sha256": "ab4c0b1159eb8a8214d70fd6d4f93f02226f16dc6cfcf2dffb3408e93b3370c1",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            7,
+            2,
+            1528,
+            338
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        }
+      ]
+    },
+    {
+      "id": "painted/pressure-wheel-v2",
+      "path": "assets/painted/pressure-wheel-v2.png",
+      "width": 24,
+      "height": 24,
+      "bytes": 1801,
+      "sha256": "1ea1a6cca770e00852647fb688c533447acf2f41436a9bf4aa3044ad9685bd75",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            0,
+            0,
+            24,
+            24
+          ],
+          "translucentPixels": 576,
+          "touchesSide": true
+        }
+      ]
+    },
+    {
+      "id": "painted/school-a-0",
+      "path": "assets/painted/school-a-0.png",
+      "width": 1536,
+      "height": 334,
+      "bytes": 482766,
+      "sha256": "2c718ba8f3c95f9c13b5d8370e121956efa6181796d47faf4337892922754a83",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            0,
+            0,
+            1536,
+            334
+          ],
+          "translucentPixels": 0,
+          "touchesSide": true
+        }
+      ]
+    },
+    {
+      "id": "painted/school-a-1",
+      "path": "assets/painted/school-a-1.png",
+      "width": 1536,
+      "height": 317,
+      "bytes": 436111,
+      "sha256": "fe5d47d1914107f1c7408ba8e2406108c507e2845b3b57a8408fea203f73d4bd",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            0,
+            5,
+            1536,
+            317
+          ],
+          "translucentPixels": 0,
+          "touchesSide": true
+        }
+      ]
+    },
+    {
+      "id": "painted/school-a-2",
+      "path": "assets/painted/school-a-2.png",
+      "width": 1536,
+      "height": 333,
+      "bytes": 467926,
+      "sha256": "c2b6990c5d08da1ee6ae60f53d78d2a5b29ee28c3031c5f2205c2eb17d102e35",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            0,
+            0,
+            1536,
+            333
+          ],
+          "translucentPixels": 0,
+          "touchesSide": true
+        }
+      ]
+    },
+    {
+      "id": "painted/school-b-0",
+      "path": "assets/painted/school-b-0.png",
+      "width": 1536,
+      "height": 330,
+      "bytes": 500385,
+      "sha256": "8c0f4e9b7f7ee90ddcb37694252c023e69e7cb5a41d28aa2004037a875efe8ad",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            8,
+            7,
+            1530,
+            330
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        }
+      ]
+    },
+    {
+      "id": "painted/school-b-1",
+      "path": "assets/painted/school-b-1.png",
+      "width": 1536,
+      "height": 318,
+      "bytes": 479403,
+      "sha256": "ae9f53094c4e45f88763c099e9fee5f6f9c6635338f7fb551eb81d9c5b2fe762",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            8,
+            2,
+            1530,
+            318
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        }
+      ]
+    },
+    {
+      "id": "painted/school-b-2",
+      "path": "assets/painted/school-b-2.png",
+      "width": 1536,
+      "height": 315,
+      "bytes": 429778,
+      "sha256": "e93da461432dd9315552465c7b7cbc470ce3fadc795fd32d6fa61a0bf1597773",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            8,
+            8,
+            1530,
+            315
+          ],
+          "translucentPixels": 0,
+          "touchesSide": false
+        }
+      ]
+    },
+    {
       "id": "painted/street-operario",
       "path": "assets/painted/street-operario.png",
       "width": 1944,
@@ -857,6 +2050,81 @@
             0,
             1944,
             360
+          ],
+          "translucentPixels": 0,
+          "touchesSide": true
+        }
+      ]
+    },
+    {
+      "id": "painted/worker-street-0",
+      "path": "assets/painted/worker-street-0.png",
+      "width": 1536,
+      "height": 343,
+      "bytes": 461528,
+      "sha256": "6a772301165ce38e6fea02068c04c3e8ccaef8d1bb10e01be9e3255bd371b7b5",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            0,
+            6,
+            1536,
+            343
+          ],
+          "translucentPixels": 0,
+          "touchesSide": true
+        }
+      ]
+    },
+    {
+      "id": "painted/worker-street-1",
+      "path": "assets/painted/worker-street-1.png",
+      "width": 1536,
+      "height": 323,
+      "bytes": 429312,
+      "sha256": "c42131014534259d984538de1dc21a30708c80faaba54dd2acbe97c8a99ea6d6",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            0,
+            6,
+            1536,
+            322
+          ],
+          "translucentPixels": 0,
+          "touchesSide": true
+        }
+      ]
+    },
+    {
+      "id": "painted/worker-street-2",
+      "path": "assets/painted/worker-street-2.png",
+      "width": 1536,
+      "height": 314,
+      "bytes": 362658,
+      "sha256": "331df82ad56af95f288edc3e86bab07542d3f37768d2c2eb56754ebf817e49d7",
+      "status": "REVIEW",
+      "source": "Origem declarada em docs/ASSET_LICENSES.md; auditar por item antes de RELEASE_READY.",
+      "license": "Conforme LICENSE e docs/ASSET_LICENSES.md; aprovação/proveniência externa não presumidas.",
+      "frames": [
+        {
+          "x": 0,
+          "y": 0,
+          "opaqueBounds": [
+            0,
+            0,
+            1536,
+            313
           ],
           "translucentPixels": 0,
           "touchesSide": true

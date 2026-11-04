@@ -64,8 +64,14 @@ export const DIALOGUES: Record<string, DialogueLine[]> = {
     { speaker: "Nero", text: "Fechado por 'inspeção sanitária'. De novo." },
   ],
   alavanca: [
-    { speaker: "Nero", text: "A válvula solta vapor demais. Melhor não mexer com a rua cheia." },
+    { speaker: "Nero", text: "Um quarto de volta. A pressão precisa de uma saída." },
   ],
+  "relogio-fabrica": [{ speaker: "Nero", text: "O relógio vigia a saída. Mesmo longe dos fornos, ninguém esquece o turno." }],
+  "quadro-taxas": [{ speaker: "Nero", text: "Mais uma folha sobre a anterior. As taxas aumentam; o tamanho das bancas continua igual." }],
+  jornal: [{ speaker: "Nero", text: "'Crescimento recorde'. O papel custa quase o preço do pão." }],
+  camara: [{ speaker: "Nero", text: "Vidros limpos, pedras novas. A fuligem parece conhecer o endereço de quem pode pagar." }],
+  "caminho-escola": [{ speaker: "Nero", text: "A escola fica adiante. Prometi estar no portão quando a aula acabasse." }],
+  jardim: [{ speaker: "Nero", text: "Aqui ainda se ouvem as folhas. Ela sempre pede para voltar por este caminho." }],
 };
 
 export function dialogueOf(id: string): DialogueLine[] {

@@ -12,6 +12,7 @@ test-results/
 playwright-report/
 playwright/.cache/
 *.tsbuildinfo
+public/build-info.json
 .idea/
 .vscode/
 !.vscode/extensions.json

@@ -29,3 +29,10 @@ export function bodyBounds(sprite: Phaser.Physics.Arcade.Sprite): Phaser.Geom.Re
   const body = sprite.body as Phaser.Physics.Arcade.Body;
   return new Phaser.Geom.Rectangle(body.x, body.y, body.width, body.height);
 }
+
+/** Damage volume is independent of the narrower movement collider and image. */
+export function hurtBounds(sprite: Phaser.Physics.Arcade.Sprite): Phaser.Geom.Rectangle {
+  const bounds = bodyBounds(sprite);
+  const height = sprite.texture.key === "winsth" ? 92 : sprite.texture.key === "nero" ? 72 : 70;
+  return new Phaser.Geom.Rectangle(bounds.x, sprite.y - height, bounds.width, height);
+}

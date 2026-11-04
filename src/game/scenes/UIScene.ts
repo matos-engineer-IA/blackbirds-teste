@@ -4,6 +4,8 @@ import { elapsedSeconds, formatTime, type RunSnapshot } from "../systems/runStat
 import { sfx } from "../utils/audio";
 import { GAME, SCENE } from "../utils/constants";
 import { GameScene } from "./GameScene";
+import { getSettings, keyFor, onSettingsChanged } from "../systems/settings";
+import { openSettings } from "../ui/settingsPanel";
 
 type HudInfo = {
   room: string;
@@ -20,6 +22,8 @@ export class UIScene extends Phaser.Scene {
   private line?: Phaser.GameObjects.Text;
   private panel?: Phaser.GameObjects.Image;
   private overlay?: Phaser.GameObjects.Container;
+  private notice!: Phaser.GameObjects.Text;
+  private settingsClose?: () => void;
 
   constructor() {
     super(SCENE.ui);
@@ -53,20 +57,30 @@ export class UIScene extends Phaser.Scene {
     }).setScrollFactor(0).setDepth(22);
 
     const game = this.scene.get(SCENE.game) as GameScene;
+    this.notice = this.add.text(14, 35, "", { fontFamily: "Georgia, serif", fontSize: "10px", color: "#f1cf8f", backgroundColor: "#16120c", wordWrap: { width: 590 } }).setDepth(60);
+    const applyTextScale = () => {
+      const scale = getSettings().textScale;
+      this.objective.setFontSize(10 * scale); this.prompt.setFontSize(10 * scale);
+      this.speaker?.setFontSize(11 * scale); this.line?.setFontSize(12 * scale);
+    };
+    applyTextScale();
+    const offSettings = onSettingsChanged(applyTextScale);
     const handlers = {
       hud: (info: HudInfo) => this.drawHud(info),
       dialogue: (line?: DialogueLine) => this.drawDialogue(line),
+      notice: (text: string) => { this.notice.setText(text); this.time.delayedCall(6000, () => this.notice.setText("")); },
       cutscene: (phase: string) => {
         const visible = !["black", "silence", "title", "done"].includes(phase);
         this.objective.setVisible(visible);
         this.prompt.setVisible(visible);
         if (!visible) this.drawDialogue(undefined);
       },
-      pause: () => this.showMenu("PAUSA", ["CONTINUAR", "REINICIAR PRÓLOGO", "MENU"], (choice) => {
+      pause: () => this.showMenu("PAUSA", ["CONTINUAR", "REINICIAR PRÓLOGO", "CONFIGURAÇÕES", "MENU"], (choice) => {
       if (choice === 0) {
         this.clearOverlay();
         game.resumePlay();
       } else if (choice === 1) game.replay();
+      else if (choice === 2) this.settingsClose = openSettings();
       else game.restartFull();
       }),
       unpause: () => this.clearOverlay(),
@@ -79,13 +93,14 @@ export class UIScene extends Phaser.Scene {
       },
     };
     for (const [event, handler] of Object.entries(handlers)) game.events.on(event, handler);
-    const onEscape = () => {
-      if (game.scene.isPaused()) game.resumePlay();
+    const onEscape = (event: KeyboardEvent) => {
+      if (!event.repeat && getSettings().bindings.pause.includes(event.code) && game.scene.isPaused()) game.resumePlay();
     };
-    this.input.keyboard?.on("keydown-ESC", onEscape);
+    this.input.keyboard?.on("keydown", onEscape);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const [event, handler] of Object.entries(handlers)) game.events.off(event, handler);
-      this.input.keyboard?.off("keydown-ESC", onEscape);
+      this.input.keyboard?.off("keydown", onEscape);
+      offSettings(); this.settingsClose?.();
       this.clearOverlay();
     });
   }
@@ -99,7 +114,7 @@ export class UIScene extends Phaser.Scene {
     const open = Boolean(line);
     this.panel?.setVisible(open);
     this.speaker?.setText(line?.speaker ?? "");
-    this.line?.setText(line ? `${line.text}  ▸` : "");
+    this.line?.setText(line ? `${line.text}  [${keyFor("interact")}]` : "");
   }
 
   private showMenu(title: string, options: string[], onPick: (index: number) => void): void {

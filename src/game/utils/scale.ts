@@ -4,8 +4,8 @@ export const SCALE = {
   winsthMeters: 2.3,
   neroBodyPx: 144,
   winsthBodyPx: 184,
-  neroFrame: { w: 120, h: 192 },
-  winsthFrame: { w: 148, h: 236 },
+  neroFrame: { w: 320, h: 224, footY: 208 },
+  winsthFrame: { w: 384, h: 288, footY: 264 },
   actorRenderScale: 0.5,
   hatExcluded: true,
 } as const;

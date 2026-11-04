@@ -37,3 +37,21 @@ Licença: a mesma do repositório (uso do jogo). Autoria: produção interna de 
 - Nenhum sprite de Blasphemous, Blasphemous 2, Dishonored, The Last Night, Dead Cells ou Kenney
 - Nenhuma fonte comercial de pixel art foi baixada
 - Nenhum serviço externo é chamado em runtime
+
+## Produção v2 em revisão — 4 de novembro de 2026
+
+Fontes novas em `art/source/production-v2/`, criadas com **imagegen** usando
+referências do próprio repositório. Prompts exatos nos JSONs e TXT dessa pasta.
+Incluem seis fases de caminhada de Nero, poses de Winsth com marreta completa,
+ciclos de população, filha, coche e fachadas distintas das quatro regiões.
+Nenhuma referência de jogo comercial foi usada como asset.
+
+`scripts/prepare-production-art.mjs` empacota envelopes, recorta painéis,
+remove matte, amostra nearest-neighbour e quantiza apenas derivados; fontes
+originais preservadas. O manifest `art/production-v2-manifest.json` registra
+origens, recortes, escalas e pivôs. `art/asset-audit.json` registra hashes/bounds.
+Tudo continua **REVIEW**: inspeção técnica e gameplay não concedem aprovação
+artística definitiva, nem completam os catálogos de animação §§16–17.
+
+jpeg-js (Apache-2.0) é ferramenta de desenvolvimento para ler a fonte legada;
+não é dependência do runtime do jogo.

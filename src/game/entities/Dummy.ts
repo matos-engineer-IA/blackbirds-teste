@@ -1,6 +1,9 @@
 import Phaser from "phaser";
 import { applyDamage, isDefeated } from "../mechanics/combat";
 import { ENEMY } from "../utils/constants";
+import { anchorFeet } from "../utils/footAnchor";
+import { getSettings } from "../systems/settings";
+import { sfx } from "../utils/audio";
 
 export class Dummy extends Phaser.Physics.Arcade.Sprite {
   hp: number = ENEMY.dummyHp;
@@ -10,18 +13,17 @@ export class Dummy extends Phaser.Physics.Arcade.Sprite {
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.setDepth(7);
-    this.setOrigin(0.5, 1);
+    anchorFeet(this, 96, 128, 18, 60, 0.8, 112);
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setImmovable(false);
     this.setPushable(false);
-    body.setSize(18, 52);
-    body.setOffset(17, 36);
   }
 
   hit(damage: number): boolean {
     if (this.hp <= 0) return false;
     this.hp = applyDamage(this.hp, damage, false);
-    this.setTint(0xffffff);
+    if (!getSettings().reducedFlashes) this.setTint(0xd9b979).setTintMode(Phaser.TintModes.FILL);
+    sfx.hit();
     this.scene.tweens.add({
       targets: this,
       duration: 70,

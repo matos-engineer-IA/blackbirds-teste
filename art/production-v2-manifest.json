@@ -1,0 +1,918 @@
+{
+  "status": "REVIEW",
+  "tool": "imagegen sources; deterministic nearest-neighbour packaging",
+  "assets": [
+    {
+      "file": "public/assets/characters/nero-production-v2.png",
+      "width": 4480,
+      "height": 224,
+      "frame": {
+        "w": 320,
+        "h": 224,
+        "footY": 208
+      },
+      "frames": [
+        {
+          "source": "art/source/nero-sheet.jpg",
+          "bounds": [
+            34,
+            48,
+            151,
+            260
+          ],
+          "scale": 0.85,
+          "foot": 254,
+          "hip": 98
+        },
+        {
+          "source": "art/source/nero-sheet.jpg",
+          "bounds": [
+            171,
+            48,
+            287,
+            260
+          ],
+          "scale": 0.85,
+          "foot": 254,
+          "hip": 230
+        },
+        {
+          "source": "art/source/production-v2/nero-walk.png",
+          "bounds": [
+            81,
+            41,
+            453,
+            485
+          ],
+          "scale": 0.365,
+          "foot": 485,
+          "hip": 282
+        },
+        {
+          "source": "art/source/production-v2/nero-walk.png",
+          "bounds": [
+            600,
+            41,
+            898,
+            482
+          ],
+          "scale": 0.365,
+          "foot": 482,
+          "hip": 778
+        },
+        {
+          "source": "art/source/production-v2/nero-walk.png",
+          "bounds": [
+            1105,
+            43,
+            1453,
+            485
+          ],
+          "scale": 0.365,
+          "foot": 485,
+          "hip": 1292
+        },
+        {
+          "source": "art/source/production-v2/nero-walk.png",
+          "bounds": [
+            73,
+            531,
+            480,
+            971
+          ],
+          "scale": 0.365,
+          "foot": 971,
+          "hip": 284
+        },
+        {
+          "source": "art/source/production-v2/nero-walk.png",
+          "bounds": [
+            588,
+            532,
+            893,
+            971
+          ],
+          "scale": 0.365,
+          "foot": 971,
+          "hip": 786
+        },
+        {
+          "source": "art/source/production-v2/nero-walk.png",
+          "bounds": [
+            1071,
+            534,
+            1451,
+            971
+          ],
+          "scale": 0.365,
+          "foot": 971,
+          "hip": 1302
+        },
+        {
+          "source": "art/source/nero-sheet.jpg",
+          "bounds": [
+            278,
+            284,
+            465,
+            490
+          ],
+          "scale": 0.85,
+          "foot": 483,
+          "hip": 384
+        },
+        {
+          "source": "art/source/nero-sheet.jpg",
+          "bounds": [
+            510,
+            323,
+            696,
+            515
+          ],
+          "scale": 0.85,
+          "foot": 506,
+          "hip": 612
+        },
+        {
+          "source": "art/source/nero-sheet.jpg",
+          "bounds": [
+            13,
+            526,
+            254,
+            737
+          ],
+          "scale": 0.85,
+          "foot": 723,
+          "hip": 133
+        },
+        {
+          "source": "art/source/nero-sheet.jpg",
+          "bounds": [
+            265,
+            526,
+            515,
+            737
+          ],
+          "scale": 0.85,
+          "foot": 721,
+          "hip": 390
+        },
+        {
+          "source": "art/source/nero-sheet.jpg",
+          "bounds": [
+            516,
+            526,
+            761,
+            737
+          ],
+          "scale": 0.85,
+          "foot": 726,
+          "hip": 587
+        },
+        {
+          "source": "art/source/nero-sheet.jpg",
+          "bounds": [
+            764,
+            526,
+            1014,
+            737
+          ],
+          "scale": 0.85,
+          "foot": 724,
+          "hip": 835
+        }
+      ]
+    },
+    {
+      "file": "public/assets/characters/winsth-production-v2.png",
+      "width": 3072,
+      "height": 288,
+      "frame": {
+        "w": 384,
+        "h": 288,
+        "footY": 264
+      },
+      "frames": [
+        {
+          "source": "art/source/production-v2/winsth-poses-fixed.png",
+          "bounds": [
+            35,
+            11,
+            432,
+            434
+          ],
+          "scale": 0.5,
+          "foot": 425,
+          "hip": 210
+        },
+        {
+          "source": "art/source/production-v2/winsth-poses-fixed.png",
+          "bounds": [
+            489,
+            12,
+            871,
+            435
+          ],
+          "scale": 0.5,
+          "foot": 425,
+          "hip": 650
+        },
+        {
+          "source": "art/source/production-v2/winsth-walk.png",
+          "bounds": [
+            128,
+            215,
+            718,
+            849
+          ],
+          "scale": 0.3,
+          "foot": 849,
+          "hip": 398
+        },
+        {
+          "source": "art/source/production-v2/winsth-walk.png",
+          "bounds": [
+            873,
+            216,
+            1453,
+            849
+          ],
+          "scale": 0.3,
+          "foot": 849,
+          "hip": 1044
+        },
+        {
+          "source": "art/source/production-v2/winsth-poses-fixed.png",
+          "bounds": [
+            12,
+            439,
+            349,
+            855
+          ],
+          "scale": 0.5,
+          "foot": 857,
+          "hip": 215
+        },
+        {
+          "source": "art/source/production-v2/winsth-poses-fixed.png",
+          "bounds": [
+            431,
+            543,
+            966,
+            855
+          ],
+          "scale": 0.5,
+          "foot": 857,
+          "hip": 598
+        },
+        {
+          "source": "art/source/production-v2/winsth-poses-fixed.png",
+          "bounds": [
+            930,
+            525,
+            1312,
+            863
+          ],
+          "scale": 0.5,
+          "foot": 857,
+          "hip": 1097
+        },
+        {
+          "source": "art/source/production-v2/winsth-poses-fixed.png",
+          "bounds": [
+            1341,
+            473,
+            1773,
+            856
+          ],
+          "scale": 0.5,
+          "foot": 858,
+          "hip": 1505
+        }
+      ]
+    },
+    {
+      "file": "public/assets/characters/npc-ilda-v2.png",
+      "width": 384,
+      "height": 128,
+      "frame": {
+        "w": 96,
+        "h": 128,
+        "footY": 112
+      },
+      "frames": [
+        {
+          "source": "art/source/production-v2/npc-cycles.png",
+          "bounds": [
+            123,
+            7,
+            289,
+            246
+          ],
+          "scale": 0.36,
+          "foot": 246,
+          "hip": 192
+        },
+        {
+          "source": "art/source/production-v2/npc-cycles.png",
+          "bounds": [
+            529,
+            7,
+            618,
+            246
+          ],
+          "scale": 0.36,
+          "foot": 246,
+          "hip": 576
+        },
+        {
+          "source": "art/source/production-v2/npc-cycles.png",
+          "bounds": [
+            886,
+            8,
+            1054,
+            246
+          ],
+          "scale": 0.36,
+          "foot": 246,
+          "hip": 960
+        },
+        {
+          "source": "art/source/production-v2/npc-cycles.png",
+          "bounds": [
+            1296,
+            7,
+            1391,
+            246
+          ],
+          "scale": 0.36,
+          "foot": 246,
+          "hip": 1344
+        }
+      ]
+    },
+    {
+      "file": "public/assets/characters/npc-worker-v2.png",
+      "width": 384,
+      "height": 128,
+      "frame": {
+        "w": 96,
+        "h": 128,
+        "footY": 112
+      },
+      "frames": [
+        {
+          "source": "art/source/production-v2/npc-cycles.png",
+          "bounds": [
+            122,
+            263,
+            287,
+            503
+          ],
+          "scale": 0.36,
+          "foot": 503,
+          "hip": 192
+        },
+        {
+          "source": "art/source/production-v2/npc-cycles.png",
+          "bounds": [
+            528,
+            262,
+            607,
+            503
+          ],
+          "scale": 0.36,
+          "foot": 503,
+          "hip": 576
+        },
+        {
+          "source": "art/source/production-v2/npc-cycles.png",
+          "bounds": [
+            886,
+            262,
+            1059,
+            502
+          ],
+          "scale": 0.36,
+          "foot": 502,
+          "hip": 960
+        },
+        {
+          "source": "art/source/production-v2/npc-cycles.png",
+          "bounds": [
+            1298,
+            262,
+            1383,
+            503
+          ],
+          "scale": 0.36,
+          "foot": 503,
+          "hip": 1344
+        }
+      ]
+    },
+    {
+      "file": "public/assets/characters/npc-mechanic-v2.png",
+      "width": 384,
+      "height": 128,
+      "frame": {
+        "w": 96,
+        "h": 128,
+        "footY": 112
+      },
+      "frames": [
+        {
+          "source": "art/source/production-v2/npc-cycles.png",
+          "bounds": [
+            122,
+            519,
+            292,
+            759
+          ],
+          "scale": 0.36,
+          "foot": 759,
+          "hip": 192
+        },
+        {
+          "source": "art/source/production-v2/npc-cycles.png",
+          "bounds": [
+            528,
+            518,
+            611,
+            759
+          ],
+          "scale": 0.36,
+          "foot": 759,
+          "hip": 576
+        },
+        {
+          "source": "art/source/production-v2/npc-cycles.png",
+          "bounds": [
+            886,
+            519,
+            1059,
+            758
+          ],
+          "scale": 0.36,
+          "foot": 758,
+          "hip": 960
+        },
+        {
+          "source": "art/source/production-v2/npc-cycles.png",
+          "bounds": [
+            1298,
+            518,
+            1393,
+            759
+          ],
+          "scale": 0.36,
+          "foot": 759,
+          "hip": 1344
+        }
+      ]
+    },
+    {
+      "file": "public/assets/characters/npc-guard-v2.png",
+      "width": 384,
+      "height": 128,
+      "frame": {
+        "w": 96,
+        "h": 128,
+        "footY": 112
+      },
+      "frames": [
+        {
+          "source": "art/source/production-v2/npc-cycles.png",
+          "bounds": [
+            122,
+            772,
+            287,
+            1015
+          ],
+          "scale": 0.36,
+          "foot": 1015,
+          "hip": 192
+        },
+        {
+          "source": "art/source/production-v2/npc-cycles.png",
+          "bounds": [
+            522,
+            769,
+            602,
+            1014
+          ],
+          "scale": 0.36,
+          "foot": 1014,
+          "hip": 576
+        },
+        {
+          "source": "art/source/production-v2/npc-cycles.png",
+          "bounds": [
+            891,
+            771,
+            1060,
+            1015
+          ],
+          "scale": 0.36,
+          "foot": 1015,
+          "hip": 960
+        },
+        {
+          "source": "art/source/production-v2/npc-cycles.png",
+          "bounds": [
+            1297,
+            769,
+            1388,
+            1014
+          ],
+          "scale": 0.36,
+          "foot": 1014,
+          "hip": 1344
+        }
+      ]
+    },
+    {
+      "file": "public/assets/characters/daughter-v2.png",
+      "width": 576,
+      "height": 112,
+      "frame": {
+        "w": 96,
+        "h": 112,
+        "footY": 104
+      },
+      "frames": [
+        {
+          "source": "art/source/production-v2/daughter.png",
+          "bounds": [
+            158,
+            11,
+            334,
+            495
+          ],
+          "scale": 0.18,
+          "foot": 495,
+          "hip": 243
+        },
+        {
+          "source": "art/source/production-v2/daughter.png",
+          "bounds": [
+            632,
+            11,
+            846,
+            495
+          ],
+          "scale": 0.18,
+          "foot": 495,
+          "hip": 757
+        },
+        {
+          "source": "art/source/production-v2/daughter.png",
+          "bounds": [
+            1139,
+            44,
+            1433,
+            495
+          ],
+          "scale": 0.18,
+          "foot": 495,
+          "hip": 1247
+        },
+        {
+          "source": "art/source/production-v2/daughter.png",
+          "bounds": [
+            103,
+            558,
+            411,
+            1006
+          ],
+          "scale": 0.18,
+          "foot": 1006,
+          "hip": 262
+        },
+        {
+          "source": "art/source/production-v2/daughter.png",
+          "bounds": [
+            623,
+            562,
+            894,
+            1006
+          ],
+          "scale": 0.18,
+          "foot": 1006,
+          "hip": 772
+        },
+        {
+          "source": "art/source/production-v2/daughter.png",
+          "bounds": [
+            1090,
+            560,
+            1445,
+            990
+          ],
+          "scale": 0.18,
+          "foot": 990,
+          "hip": 1270
+        }
+      ]
+    },
+    {
+      "file": "public/assets/characters/carriage-v2.png",
+      "width": 416,
+      "height": 256,
+      "frame": {
+        "w": 416,
+        "h": 256,
+        "footY": 248
+      },
+      "frames": [
+        {
+          "source": "art/source/production-v2/carriage.png",
+          "bounds": [
+            135,
+            175,
+            1396,
+            894
+          ],
+          "scale": 0.3,
+          "foot": 894,
+          "hip": 765.5
+        }
+      ]
+    },
+    {
+      "file": "public/assets/painted/worker-street-0.png",
+      "width": 1536,
+      "height": 343,
+      "source": "art/source/production-v2/worker-street.png",
+      "crop": [
+        0,
+        0,
+        1536,
+        343
+      ]
+    },
+    {
+      "file": "public/assets/painted/worker-street-1.png",
+      "width": 1536,
+      "height": 323,
+      "source": "art/source/production-v2/worker-street.png",
+      "crop": [
+        0,
+        350,
+        1536,
+        673
+      ]
+    },
+    {
+      "file": "public/assets/painted/worker-street-2.png",
+      "width": 1536,
+      "height": 314,
+      "source": "art/source/production-v2/worker-street.png",
+      "crop": [
+        0,
+        680,
+        1536,
+        994
+      ]
+    },
+    {
+      "file": "public/assets/painted/market-a-0.png",
+      "width": 1536,
+      "height": 358,
+      "source": "art/source/production-v2/market-a.png",
+      "crop": [
+        0,
+        0,
+        1536,
+        358
+      ]
+    },
+    {
+      "file": "public/assets/painted/market-a-1.png",
+      "width": 1536,
+      "height": 303,
+      "source": "art/source/production-v2/market-a.png",
+      "crop": [
+        0,
+        362,
+        1536,
+        665
+      ]
+    },
+    {
+      "file": "public/assets/painted/market-a-2.png",
+      "width": 1536,
+      "height": 303,
+      "source": "art/source/production-v2/market-a.png",
+      "crop": [
+        0,
+        680,
+        1536,
+        983
+      ]
+    },
+    {
+      "file": "public/assets/painted/market-b-0.png",
+      "width": 1536,
+      "height": 324,
+      "source": "art/source/production-v2/market-b.png",
+      "crop": [
+        0,
+        0,
+        1536,
+        324
+      ]
+    },
+    {
+      "file": "public/assets/painted/market-b-1.png",
+      "width": 1536,
+      "height": 311,
+      "source": "art/source/production-v2/market-b.png",
+      "crop": [
+        0,
+        340,
+        1536,
+        651
+      ]
+    },
+    {
+      "file": "public/assets/painted/market-b-2.png",
+      "width": 1536,
+      "height": 338,
+      "source": "art/source/production-v2/market-b.png",
+      "crop": [
+        0,
+        670,
+        1536,
+        1008
+      ]
+    },
+    {
+      "file": "public/assets/painted/avenue-a-0.png",
+      "width": 1536,
+      "height": 333,
+      "source": "art/source/production-v2/avenue-a.png",
+      "crop": [
+        0,
+        0,
+        1536,
+        333
+      ]
+    },
+    {
+      "file": "public/assets/painted/avenue-a-1.png",
+      "width": 1536,
+      "height": 315,
+      "source": "art/source/production-v2/avenue-a.png",
+      "crop": [
+        0,
+        344,
+        1536,
+        659
+      ]
+    },
+    {
+      "file": "public/assets/painted/avenue-a-2.png",
+      "width": 1536,
+      "height": 322,
+      "source": "art/source/production-v2/avenue-a.png",
+      "crop": [
+        0,
+        674,
+        1536,
+        996
+      ]
+    },
+    {
+      "file": "public/assets/painted/avenue-b-0.png",
+      "width": 1536,
+      "height": 339,
+      "source": "art/source/production-v2/avenue-b.png",
+      "crop": [
+        0,
+        0,
+        1536,
+        339
+      ]
+    },
+    {
+      "file": "public/assets/painted/avenue-b-1.png",
+      "width": 1536,
+      "height": 304,
+      "source": "art/source/production-v2/avenue-b.png",
+      "crop": [
+        0,
+        359,
+        1536,
+        663
+      ]
+    },
+    {
+      "file": "public/assets/painted/avenue-b-2.png",
+      "width": 1536,
+      "height": 321,
+      "source": "art/source/production-v2/avenue-b.png",
+      "crop": [
+        0,
+        680,
+        1536,
+        1001
+      ]
+    },
+    {
+      "file": "public/assets/painted/school-a-0.png",
+      "width": 1536,
+      "height": 334,
+      "source": "art/source/production-v2/school-a.png",
+      "crop": [
+        0,
+        0,
+        1536,
+        334
+      ]
+    },
+    {
+      "file": "public/assets/painted/school-a-1.png",
+      "width": 1536,
+      "height": 317,
+      "source": "art/source/production-v2/school-a.png",
+      "crop": [
+        0,
+        348,
+        1536,
+        665
+      ]
+    },
+    {
+      "file": "public/assets/painted/school-a-2.png",
+      "width": 1536,
+      "height": 333,
+      "source": "art/source/production-v2/school-a.png",
+      "crop": [
+        0,
+        678,
+        1536,
+        1011
+      ]
+    },
+    {
+      "file": "public/assets/painted/school-b-0.png",
+      "width": 1536,
+      "height": 330,
+      "source": "art/source/production-v2/school-b.png",
+      "crop": [
+        0,
+        0,
+        1536,
+        330
+      ]
+    },
+    {
+      "file": "public/assets/painted/school-b-1.png",
+      "width": 1536,
+      "height": 318,
+      "source": "art/source/production-v2/school-b.png",
+      "crop": [
+        0,
+        344,
+        1536,
+        662
+      ]
+    },
+    {
+      "file": "public/assets/painted/school-b-2.png",
+      "width": 1536,
+      "height": 315,
+      "source": "art/source/production-v2/school-b.png",
+      "crop": [
+        0,
+        680,
+        1536,
+        995
+      ]
+    },
+    {
+      "file": "public/assets/painted/door-leaf-v2.png",
+      "width": 60,
+      "height": 90,
+      "source": "art/source/production-v2/worker-street.png",
+      "crop": [
+        109,
+        252,
+        169,
+        342
+      ]
+    },
+    {
+      "file": "public/assets/painted/pressure-wheel-v2.png",
+      "width": 24,
+      "height": 24,
+      "source": "art/source/production-v2/worker-street.png",
+      "crop": [
+        372,
+        581,
+        396,
+        605
+      ]
+    }
+  ]
+}

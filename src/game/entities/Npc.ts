@@ -5,7 +5,7 @@ import { addContactShadow, anchorFeet } from "../utils/footAnchor";
 const TEXTURE: Record<NpcKind, string> = {
   worker: "npc-worker",
   merchant: "npc-ilda",
-  guard: "npc-worker",
+  guard: "npc-guard",
   child: "npc-child",
   poor: "npc-ilda",
   elite: "npc-ilda",
@@ -22,6 +22,7 @@ export class Npc extends Phaser.Physics.Arcade.Sprite {
   private pauseMs = 0;
   private shadow: Phaser.GameObjects.Image;
   private readonly textureKey: string;
+  private readonly facesLeft: boolean;
 
   constructor(
     scene: Phaser.Scene,
@@ -40,10 +41,11 @@ export class Npc extends Phaser.Physics.Arcade.Sprite {
     this.homeX = x;
     this.range = patrol;
     this.textureKey = TEXTURE[kind];
+    this.facesLeft = kind === "child";
     this.setDepth(7);
     const child = kind === "child";
-    if (child) anchorFeet(this, 40, 64, 14, 44, 0.75);
-    else anchorFeet(this, 52, 88, 18, 60, 0.8);
+    if (child) anchorFeet(this, 96, 112, 14, 44, 0.55, 104);
+    else anchorFeet(this, 96, 128, 18, 60, 0.8, 112);
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setAllowGravity(true);
     body.setImmovable(false);
@@ -61,7 +63,7 @@ export class Npc extends Phaser.Physics.Arcade.Sprite {
   }
 
   face(targetX: number): void {
-    this.setFlipX(targetX < this.x);
+    this.setFlipX(this.facesLeft ? targetX > this.x : targetX < this.x);
   }
 
   preUpdate(time: number, delta: number): void {
@@ -88,6 +90,6 @@ export class Npc extends Phaser.Physics.Arcade.Sprite {
     }
     this.setVelocityX(this.dir * 28);
     this.play(`${this.textureKey}-walk`, true);
-    this.setFlipX(this.dir < 0);
+    this.setFlipX(this.facesLeft ? this.dir > 0 : this.dir < 0);
   }
 }
