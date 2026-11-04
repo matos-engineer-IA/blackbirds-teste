@@ -149,7 +149,7 @@ try {
       assert.equal(reset.bottom, 318);
       results.push({ id: `BOS-RESET-${i}`, status: 'passou', observed: reset });
     }
-    await shot('nero-winsth-scale');
+    await shot('arena-reset');
     return { activeBeforeDefeat, restarts: 10, threatsClearedAfterDefeat: true, anatomicalScaleApproval: 'não verificada; arte em revisão' };
   });
   assert.deepEqual(errors, []);

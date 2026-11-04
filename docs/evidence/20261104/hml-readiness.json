@@ -1,0 +1,35 @@
+{
+  "checkedAt": "2026-11-04T02:15:00Z",
+  "method": "Read-only Huddle project/import/environment metadata, operational documents and public HTTPS portal request. No credentials extracted or service changes made.",
+  "repository": "matos-engineer-IA/blackbirds-teste",
+  "trackedBranch": "black-bird-revolucao",
+  "trackedRevision": "faeb5d5",
+  "projectRecords": 2,
+  "imports": [
+    {
+      "status": "failed_intervention",
+      "error": "connection_expired",
+      "environment": null,
+      "approval": null,
+      "accessUrl": ""
+    },
+    {
+      "status": "plan_blocked",
+      "environment": null,
+      "approval": null,
+      "accessUrl": ""
+    }
+  ],
+  "gameEnvironments": 0,
+  "environmentProviderEnabled": false,
+  "previewGatewayEnabled": false,
+  "portalHttpsStatus": 200,
+  "gameHmlUrl": null,
+  "result": "BLOQUEADO EXTERNO: authorized HML pipeline has no provisioned game environment or approved access URL; independent approval and connection recovery require external action. Local game work continues.",
+  "pipelineFlagsRecheckedAt": "2026-11-04T03:07:36.502168+00:00",
+  "pipelineFlagsRecheck": {
+    "environmentProviderEnabled": false,
+    "previewGatewayEnabled": false,
+    "method": "Read-only settings load in application container; no settings or services changed."
+  }
+}

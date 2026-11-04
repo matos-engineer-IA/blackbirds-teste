@@ -1,0 +1,17 @@
+{
+  "filesCompared": 69,
+  "method": "Read-only copies OUT of image-built containers; no manual writes into serving container. Byte comparison of entire production artefact.",
+  "differentFiles": [
+    "build-info.json"
+  ],
+  "runtimeFilesIdentical": true,
+  "servedJavascriptMatchesImage": true,
+  "build": {
+    "name": "Black Bird: Revolu\u00e7\u00e3o",
+    "buildId": "bb-5233fb49e865",
+    "contentHash": "5233fb49e86594e3913eb72ba006e3a1a66b0515b15bd0349f698310f2ae437e",
+    "baseCommit": "401f4c3",
+    "builtAt": "2026-11-04T02:54:08.861Z"
+  },
+  "accessBoundary": "127.0.0.1 loopback only; not HML or external web access"
+}

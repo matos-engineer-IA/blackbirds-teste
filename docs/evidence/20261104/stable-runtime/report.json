@@ -1,0 +1,38 @@
+{
+  "date": "2026-11-04T02:56:55.086Z",
+  "url": "http://127.0.0.1:4186/",
+  "results": [
+    {
+      "fps": 30,
+      "move": {
+        "x": 384.1796666666661,
+        "bottom": 318,
+        "frames": 51,
+        "elapsedMs": 1713.4000000953674,
+        "meanDelta": 33.333333333333336
+      },
+      "jump": {
+        "minY": 265.1666666666666,
+        "bottom": 318
+      }
+    },
+    {
+      "fps": 60,
+      "move": {
+        "x": 386.0288333333328,
+        "bottom": 318,
+        "frames": 103,
+        "elapsedMs": 1747.5,
+        "meanDelta": 16.82621359223301
+      },
+      "jump": {
+        "minY": 265.1666666666665,
+        "bottom": 318
+      }
+    }
+  ],
+  "errors": [],
+  "limitations": [
+    "Requested rAF caps are 30/60; observed frame intervals are recorded and may be lower under software rendering. Native 144 Hz display unavailable. Synthetic blur; no external HML validation."
+  ]
+}

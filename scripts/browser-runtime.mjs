@@ -1,3 +1,58 @@
-import assert from 'node:assert/strict';import fs from 'node:fs/promises';import path from 'node:path';import{chromium}from'playwright';
-const output=process.env.EVIDENCE_DIR||'docs/evidence/runtime';await fs.mkdir(output,{recursive:true});const b=await chromium.launch({...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{}),args:['--no-sandbox']});const errors=[],results=[];const report={date:new Date().toISOString(),url:process.env.GAME_URL,results,errors,limitations:['Requested rAF caps are 30/60; observed frame intervals are recorded and may be lower under software rendering. Native 144 Hz display unavailable. Synthetic blur; no external HML validation.']};
-try{for(const fps of[30,60]){const p=await b.newPage({viewport:{width:1280,height:720}});p.on('pageerror',e=>errors.push(e.stack));await p.addInitScript(fps=>{const native=requestAnimationFrame.bind(window),queue=new Map();let serial=0,last=0;const tick=time=>{if(time-last>=1000/fps-.8){last=time;const batch=[...queue.values()];queue.clear();for(const callback of batch)callback(time)}native(tick)};native(tick);window.requestAnimationFrame=callback=>{const id=++serial;queue.set(id,callback);return id};window.cancelAnimationFrame=id=>queue.delete(id)},fps);await p.goto(process.env.GAME_URL||'http://127.0.0.1:4187/');await p.waitForFunction(()=>window.blackBird?.scene.isActive('MenuScene'));await p.keyboard.press('Enter');await p.waitForTimeout(400);await p.evaluate(fps=>{const s=window.blackBird.scene.getScene('GameScene');window.__sample={minY:s.player.y,frames:0,startedAt:performance.now(),deltas:[]};s.events.on('postupdate',(_time,delta)=>{window.__sample.deltas.push(delta);window.__sample.minY=Math.min(window.__sample.minY,s.player.y);window.__sample.frames++})},fps);await p.keyboard.down('d');await p.waitForTimeout(1500);await p.keyboard.up('d');await p.waitForTimeout(200);const move=await p.evaluate(()=>{const s=window.blackBird.scene.getScene('GameScene');return{x:s.player.x,bottom:s.player.body.bottom,frames:window.__sample.frames,elapsedMs:performance.now()-window.__sample.startedAt,meanDelta:window.__sample.deltas.reduce((a,b)=>a+b,0)/window.__sample.deltas.length}});console.log({fps,move});assert.ok(move.x>350&&move.x<410);assert.equal(move.bottom,318);await p.keyboard.down('Space');await p.waitForTimeout(400);await p.keyboard.up('Space');await p.waitForTimeout(600);const jump=await p.evaluate(()=>({minY:window.__sample.minY,bottom:window.blackBird.scene.getScene('GameScene').player.body.bottom}));assert.ok(jump.minY<280);assert.equal(jump.bottom,318);await p.setViewportSize({width:900,height:700});await p.screenshot({path:path.join(output,`fps-${fps}.png`)});results.push({fps,move,jump});await p.close();}assert.ok(Math.abs(results[0].move.x-results[1].move.x)<12);assert.deepEqual(errors,[]);}catch(e){report.failure=e.stack;console.error(e);process.exitCode=1;}finally{await b.close();await fs.writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2));console.log(report);}
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { chromium } from 'playwright';
+const output = process.env.EVIDENCE_DIR || 'docs/evidence/runtime';
+await fs.mkdir(output, { recursive: true });
+const b = await chromium.launch({ ...(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {}), args: ['--no-sandbox'] });
+const errors = [], results = [];
+const report = { date: new Date().toISOString(), url: process.env.GAME_URL, results, errors, limitations: ['Requested rAF caps are 30/60; observed frame intervals are recorded and may be lower under software rendering. Native 144 Hz display unavailable. Synthetic blur; no external HML validation.'] };
+try {
+    for (const fps of [30, 60]) {
+        const p = await b.newPage({ viewport: { width: 1280, height: 720 } });
+        p.on('pageerror', e => errors.push(e.stack));
+        await p.addInitScript(fps => { const native = requestAnimationFrame.bind(window), queue = new Map(); let serial = 0, last = 0; const tick = time => { if (time - last >= 1000 / fps - .8) {
+            last = time;
+            const batch = [...queue.values()];
+            queue.clear();
+            for (const callback of batch)
+                callback(time);
+        } native(tick); }; native(tick); window.requestAnimationFrame = callback => { const id = ++serial; queue.set(id, callback); return id; }; window.cancelAnimationFrame = id => queue.delete(id); }, fps);
+        await p.goto(process.env.GAME_URL || 'http://127.0.0.1:4187/');
+        await p.waitForFunction(() => window.blackBird?.scene.isActive('MenuScene'));
+        await p.keyboard.press('Enter');
+        await p.waitForTimeout(400);
+        await p.evaluate(fps => { const s = window.blackBird.scene.getScene('GameScene'); window.__sample = { minY: s.player.y, frames: 0, startedAt: performance.now(), deltas: [] }; s.events.on('postupdate', (_time, delta) => { window.__sample.deltas.push(delta); window.__sample.minY = Math.min(window.__sample.minY, s.player.y); window.__sample.frames++; }); }, fps);
+        await p.keyboard.down('d');
+        await p.waitForTimeout(1500);
+        await p.keyboard.up('d');
+        await p.waitForTimeout(200);
+        const move = await p.evaluate(() => { const s = window.blackBird.scene.getScene('GameScene'); return { x: s.player.x, bottom: s.player.body.bottom, frames: window.__sample.frames, elapsedMs: performance.now() - window.__sample.startedAt, meanDelta: window.__sample.deltas.reduce((a, b) => a + b, 0) / window.__sample.deltas.length }; });
+        console.log({ fps, move });
+        assert.ok(move.x > 350 && move.x < 410);
+        assert.equal(move.bottom, 318);
+        await p.keyboard.down('Space');
+        await p.waitForTimeout(400);
+        await p.keyboard.up('Space');
+        await p.waitForTimeout(600);
+        const jump = await p.evaluate(() => ({ minY: window.__sample.minY, bottom: window.blackBird.scene.getScene('GameScene').player.body.bottom }));
+        assert.ok(jump.minY < 280);
+        assert.equal(jump.bottom, 318);
+        await p.setViewportSize({ width: 900, height: 700 });
+        await p.screenshot({ path: path.join(output, `fps-${fps}.png`) });
+        results.push({ fps, move, jump });
+        await p.close();
+    }
+    assert.ok(Math.abs(results[0].move.x - results[1].move.x) < 12);
+    assert.deepEqual(errors, []);
+}
+catch (e) {
+    report.failure = e.stack;
+    console.error(e);
+    process.exitCode = 1;
+}
+finally {
+    await b.close();
+    await fs.writeFile(path.join(output, 'report.json'), JSON.stringify(report, null, 2));
+    console.log(report);
+}

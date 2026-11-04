@@ -1,0 +1,8 @@
+{
+  "sourceSha256": "06774bafeba8ea12ec5e05ca625047754a836a61c942e75ebe2bc0c4d0e7c89d",
+  "sourceBytes": 29307687,
+  "preservedOriginal": "/home/matheus/blackbird-evidence-20261104-raw/rc5-opening.webm",
+  "derivedSha256": "b15788ae1072a17186adb9219707e73de5f7b63ac94afc04f88bbfeb8d0a6352",
+  "derivedBytes": 5376631,
+  "transcode": "VP8 640x360, 12 fps, 180 kbps target/CRF40, one thread; silent capture of actual gameplay, same timeline"
+}

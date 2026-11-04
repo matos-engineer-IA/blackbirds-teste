@@ -1,0 +1,64 @@
+{
+  "date": "2026-11-04T02:49:55.867Z",
+  "url": "http://127.0.0.1:4186/",
+  "browser": "156.0.8078.47",
+  "checks": [
+    "Porta abre com input real e a conversa devolve controle.",
+    "Conversa completa da vizinha durante a travessia.",
+    "Válvula mercado: resposta e flag persistente.",
+    "Válvula avenida: resposta e flag persistente.",
+    "Válvula escola: resposta e flag persistente.",
+    "Prólogo inteiro por teclado, tela preta antes do cue, título e save completo; seis fases de caminhada observadas.",
+    "Jogar novamente reinicia sem reload manual."
+  ],
+  "errors": [],
+  "limitations": [
+    "Chromium headless/software; vídeo não contém áudio. Web Audio e captions instrumentados; não é aprovação de mix ou playtest humano.",
+    "Sem fixture de posição neste percurso: deslocamento por teclado em velocidade normal."
+  ],
+  "build": {
+    "name": "Black Bird: Revolução",
+    "buildId": "bb-5233fb49e865",
+    "contentHash": "5233fb49e86594e3913eb72ba006e3a1a66b0515b15bd0349f698310f2ae437e",
+    "baseCommit": "1bf06d2",
+    "builtAt": "2026-11-04T02:48:55.638Z"
+  },
+  "route": {
+    "activeSeconds": 192.02459999999996,
+    "distance": 26924.436833329848,
+    "x": 26542.36849999644
+  },
+  "observed": {
+    "opening": {
+      "frames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        0,
+        6,
+        7
+      ],
+      "phases": [
+        "lock",
+        "approach",
+        "daughter",
+        "vehicle",
+        "black",
+        "silence",
+        "title",
+        "done"
+      ],
+      "blackAt": 208626.19999980927,
+      "crashAt": 208727.7999997139
+    },
+    "audio": {
+      "starts": 544,
+      "states": [
+        "running"
+      ]
+    },
+    "completed": true
+  }
+}

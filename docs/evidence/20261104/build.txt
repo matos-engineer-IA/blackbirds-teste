@@ -1,0 +1,24 @@
+
+> black-bird-revolucao@1.0.0 prebuild
+> node scripts/build-info.mjs
+
+bb-5233fb49e865
+
+> black-bird-revolucao@1.0.0 build
+> tsc --noEmit -p tsconfig.json && vite build
+
+vite v6.4.5 building for production...
+transforming...
+✓ 48 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                     0.66 kB │ gzip:   0.39 kB
+dist/assets/index-B7rIhJgr.css      2.05 kB │ gzip:   0.88 kB
+dist/assets/index-DchZ1ExS.js      79.81 kB │ gzip:  25.87 kB
+dist/assets/phaser-BwSGr_Za.js  1,684.94 kB │ gzip: 381.36 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.56s

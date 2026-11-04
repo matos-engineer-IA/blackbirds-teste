@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-04T02:56:54.190Z",
+  "script": "npm run art:production",
+  "assetsCompared": 31,
+  "changed": [],
+  "source": "art/source/production-v2",
+  "result": "Byte-identical regeneration; sources and pivot manifest preserved."
+}

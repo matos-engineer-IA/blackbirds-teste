@@ -1,0 +1,8 @@
+{
+  "sourceSha256": "3674e3113f26b7a93e305da8ea4973f8d195a71e70324ef633076247289eb52d",
+  "sourceBytes": 61786572,
+  "preservedOriginal": "/home/matheus/blackbird-evidence-20261104-raw/stable-regression.webm",
+  "derivedSha256": "687f3acab3bc256f58a4ade7a414a8dd6c87fdf19cec4d453b82738e519324ea",
+  "derivedBytes": 11282244,
+  "transcode": "VP8 640x360, 12 fps, 180 kbps target/CRF40, one thread; actual silent browser capture, timeline preserved"
+}

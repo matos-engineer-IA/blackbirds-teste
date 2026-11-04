@@ -1,0 +1,123 @@
+{
+  "date": "2026-11-04T02:55:46.433Z",
+  "baseCommit": "401f4c3ea145de1f7d53e188e57ce41961b769eb",
+  "workingTree": " scripts/browser-opening.mjs        | 145 ++++++++++++++++++++------\n scripts/browser-resilience.mjs     |  95 +++++++++++++++--\n scripts/browser-runtime.mjs        |  61 ++++++++++-\n scripts/browser-ux.mjs             | 117 +++++++++++++--------\n scripts/build-info.mjs             |  23 +++--\n scripts/prepare-production-art.mjs | 205 +++++++++++++++++++++----------------\n 6 files changed, 463 insertions(+), 183 deletions(-)\n",
+  "browser": "156.0.8078.47",
+  "url": "http://127.0.0.1:4186/",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "results": [
+    {
+      "id": "PHY-01",
+      "status": "passou",
+      "durationMs": 30034,
+      "observed": {
+        "beforeY": 318,
+        "afterY": 318,
+        "bottom": 318,
+        "seconds": 30
+      }
+    },
+    {
+      "id": "PAUSE-MOVEMENT",
+      "status": "passou",
+      "durationMs": 2354,
+      "observed": {
+        "beforeX": 265.27250000000095,
+        "afterX": 265.27250000000095,
+        "npcsFrozen": true
+      }
+    },
+    {
+      "id": "INP-01/02/03/09",
+      "status": "passou",
+      "durationMs": 4775,
+      "observed": {
+        "speaker": "vizinha",
+        "playerStopped": true,
+        "npcStopped": true,
+        "pauseRestoredDialogue": true
+      }
+    },
+    {
+      "id": "INP-04/10",
+      "status": "passou",
+      "durationMs": 12732,
+      "observed": {
+        "cycles": 10,
+        "dialogueListeners": 1,
+        "removedSpeakerRecovered": true
+      }
+    },
+    {
+      "id": "PHY-05",
+      "status": "passou",
+      "durationMs": 2453,
+      "observed": {
+        "short": 23.05066666666653,
+        "held": 52.83333333333326
+      }
+    },
+    {
+      "id": "CAM-01/02/03/05/10; PHY-02; NAR-03",
+      "status": "passou",
+      "durationMs": 394607,
+      "observed": {
+        "farX": 27634.3633333292,
+        "farCamera": 27008,
+        "returnedX": 14.8023333333345,
+        "activeWalkSeconds": 393.2833999999996,
+        "outboundActiveSeconds": 196.52569999999997,
+        "distance": 55077.924333330695
+      }
+    },
+    {
+      "id": "CAM-06 / UX-08",
+      "status": "passou",
+      "durationMs": 489,
+      "observed": {
+        "viewport": "900x700",
+        "floor": 318
+      }
+    },
+    {
+      "id": "INP-06 / INP-09 focus",
+      "status": "passou",
+      "durationMs": 1354,
+      "observed": {
+        "syntheticDomBlur": true,
+        "inputRecovered": true
+      }
+    },
+    {
+      "id": "RESET / REL-08",
+      "status": "passou",
+      "durationMs": 2573,
+      "observed": {
+        "restarts": 3,
+        "dialogueListeners": 1,
+        "runReset": true
+      }
+    },
+    {
+      "id": "NAR-04/05/09",
+      "status": "passou",
+      "durationMs": 8812,
+      "observed": {
+        "fixture": true,
+        "pausedTimelineFrozen": true,
+        "blackCutCaptured": true,
+        "noBossAfterStory": true
+      }
+    }
+  ],
+  "errors": [],
+  "limitations": [
+    "Chromium headless, renderização por software; não equivale a playtest humano.",
+    "Não valida aprovação artística, Docker ou HML."
+  ],
+  "artifactScript": "./assets/index-DchZ1ExS.js",
+  "video": "docs/evidence/20261104/stable-regression/regression.webm"
+}

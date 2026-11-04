@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-04T02:55:47.735Z",
+  "errors": [],
+  "checks": [
+    "V dispara salto remapeado; movimento reduzido e volume persistem; pausa grava checkpoint seguro.",
+    "Continue após reload preserva posição e configurações.",
+    "Save corrompido não oferece Continue nem apaga configurações."
+  ]
+}

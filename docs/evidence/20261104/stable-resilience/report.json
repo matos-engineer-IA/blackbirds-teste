@@ -1,0 +1,35 @@
+{
+  "date": "2026-11-04T02:55:47.503Z",
+  "url": "http://127.0.0.1:4186/",
+  "checks": [
+    {
+      "case": "door-save-return",
+      "restored": {
+        "flag": true,
+        "scale": 0.12,
+        "opened": true
+      },
+      "fixture": "only the round trip positions; initial door interaction and reload use real input"
+    },
+    {
+      "case": "skip",
+      "completed": true,
+      "noLateCrashCaption": true
+    },
+    {
+      "case": "blocked-storage",
+      "movementRemainsUsable": true,
+      "visibleNotice": true
+    },
+    {
+      "case": "asset-network-failure",
+      "visibleRetry": true,
+      "retryRestoredMenu": true,
+      "expectedNetworkAbort": "nero-production-v2.png"
+    }
+  ],
+  "errors": [],
+  "limitations": [
+    "Fixtures only for region-return and cinematic skip cases; they do not prove route duration."
+  ]
+}
