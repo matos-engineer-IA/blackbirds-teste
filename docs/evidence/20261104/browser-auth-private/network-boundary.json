@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-04T14:21:34.370892+00:00",
+  "privateEndpoint": "http://10.100.62.4:4187/",
+  "vmBrowserAuthenticatedGameplay": "passed",
+  "anonymousLocalRequest": 401,
+  "inboundPublication": "Docker DNAT for 10.100.62.4:4187 to game container port 8080; no wildcard listener; no DOCKER-USER rules observed",
+  "auxiliaryProbe": {
+    "source": "temporary container on docker0 to host private address",
+    "result": "timeout",
+    "boundary": "Docker publication rules exclude incoming docker0; this hairpin request is not equivalent to client ingress on eth0. Host UFW is active. No global firewall settings changed."
+  },
+  "clientEdge": "not confirmed; user feedback pending",
+  "engineering": {
+    "environmentProviderEnabled": false,
+    "previewGatewayEnabled": false,
+    "hmlAccessDomainConfigured": false,
+    "previewDomainConfigured": false
+  },
+  "globalInfrastructureChanges": false
+}
