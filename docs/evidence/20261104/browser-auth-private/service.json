@@ -1,0 +1,23 @@
+{
+  "container": "/black-bird-codex-browser-demo-20261104",
+  "id": "ed55bdec84425541cadba555f00af1374905275e84f2dc3b90d6dfcdc2d2b472",
+  "image": "sha256:564ee3dc08d5b47801cd4965028bba69ee1715702403ec6cfb62a45b88e392e1",
+  "status": "running",
+  "health": "healthy",
+  "restartPolicy": "unless-stopped",
+  "ports": {
+    "80/tcp": null,
+    "8080/tcp": [
+      {
+        "HostIp": "10.100.62.4",
+        "HostPort": "4187"
+      },
+      {
+        "HostIp": "127.0.0.1",
+        "HostPort": "4187"
+      }
+    ]
+  },
+  "validatedFrom": "Chromium in VM, using private interface IP; user Edge confirmation pending",
+  "date": "2026-11-04T14:15:57.685840+00:00"
+}

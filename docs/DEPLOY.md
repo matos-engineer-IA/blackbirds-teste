@@ -1,6 +1,40 @@
 # Deploy
 
-Aplicação web estática. Sem banco, sem secrets.
+Aplicação web estática, sem banco. Autenticação opcional por configuração de runtime.
+
+## Acesso temporário pelo navegador — 04/11/2026
+
+URL de demonstração na rede privada/VPN: **http://10.100.62.4:4187/**.
+Container `black-bird-codex-browser-demo-20261104`, imagem
+`black-bird-revolucao:browser-auth-20261104`, build `bb-9304faa4568d`.
+Porta vinculada somente a `10.100.62.4` e `127.0.0.1`; não há exposição em
+0.0.0.0, túnel público, alteração de DNS/firewall global ou proxy do portal.
+O usuário autentica no navegador. Não precisa de conta ou login na VM.
+Credenciais temporárias são fornecidas pelo proprietário; senha e hash não
+devem entrar neste repositório. Teste do endereço feito da VM, não do Edge do cliente.
+Esse acesso não comprova importação, criação de HML ou publicação pelo Engineering.
+
+Autenticação HTTP Basic é aplicada pelo Nginx a HTML, assets e build-info.
+`/health.html` continua sem autenticação para o health check. Configuração de runtime:
+
+- `BLACKBIRD_AUTH_USER`: usuário da demonstração.
+- `BLACKBIRD_AUTH_PASSWORD_HASH`: hash crypt/htpasswd, gerado pelo operador e
+  injetado como segredo de runtime. A implantação atual usa SHA-512 crypt.
+- O entrypoint não escreve senha no bundle ou na imagem; gera os arquivos com
+  permissões restritas fora do webroot. Credenciais parciais/formatos inválidos
+  impedem o início. Sem ambas as variáveis, a imagem mantém o comportamento
+  anterior para ambientes cuja autenticação já é fornecida pelo gateway.
+
+Contrato de implantação existente mantido: porta 8080, health, Dockerfile e
+assets relativos. Na HML, o gateway autorizado deve entregar a URL HTTPS e
+aplicar as regras de acesso do Engineering; login de aplicação não substitui IAM.
+Referência: [Nginx HTTP Basic](https://nginx.org/en/docs/http/ngx_http_auth_basic_module.html).
+
+Evidências: `evidence/20261104/browser-auth/` e `browser-auth-private/`.
+Verificaram 401 sem autenticação/com senha incorreta, 200 com credenciais
+válidas, proteção dos assets, health e jogo em movimento após autenticar.
+
+O container estável anterior de 4186 permanece ativo para recuperação.
 
 Checkpoint de 04/11/2026: código `401f4c3`, build `bb-5233fb49e865`, imagem
 `black-bird-revolucao:401f4c3`. Container local persistente

@@ -1,5 +1,12 @@
 # Evidências de execução — 04/11/2026
 
+Atualização de acesso: demonstração temporária na rede/VPN em
+**http://10.100.62.4:4187/**, com autenticação da aplicação.
+[Testes de login e jogo pelo IP privado](browser-auth-private/README.md).
+Navegador na VM validado; Edge do computador do usuário ainda não confirmado.
+Esse endereço não é HML gerada pelo Engineering. O registro abaixo corresponde
+à versão estável anterior preservada, cujo gameplay permanece igual.
+
 Código funcional `401f4c3`; build **bb-5233fb49e865**. Serviço local em
 `127.0.0.1:4186`, Nginx/container persistente. **Não é HML nem acesso externo.**
 

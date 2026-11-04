@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-04T14:11:55.389Z",
+  "url": "http://10.100.62.4:4187/",
+  "checks": [
+    "Anonymous HTML, build identity and assets require browser authentication.",
+    "Invalid credentials denied; valid credentials accepted; container health remains usable.",
+    "Authenticated browser loads menu and all required resources, enters opening and moves Nero on the floor."
+  ],
+  "errors": [],
+  "limitations": [
+    "Local production container; does not establish an external HTTPS route or Engineering deployment."
+  ],
+  "build": {
+    "name": "Black Bird: Revolução",
+    "buildId": "bb-9304faa4568d",
+    "contentHash": "9304faa4568d9388b4c2c16c1b5d2c73a4275f353a0f4df840efc977487aabe0",
+    "baseCommit": "e32aa1b",
+    "builtAt": "2026-11-04T14:08:53.473Z"
+  },
+  "observed": {
+    "before": 176,
+    "after": {
+      "x": 255.94233333333364,
+      "bottom": 318,
+      "mode": "EXPLORING"
+    }
+  }
+}

@@ -22,6 +22,7 @@ Código funcional: `401f4c3`, build `bb-5233fb49e865`. Evidências em `evidence/
 | Áudio | PARCIAL: buses, volume, ambiente regional, passos/cues e captions conectados; Web Audio observado running; escuta/mix e trilha definitiva não aprovados |
 | Performance e navegadores | PARCIAL: Chromium/software, duas resoluções desktop, movimento/salto em rAF 30/60; hardware de referência, 144 Hz nativo e perda de contexto WebGL NÃO VERIFICADOS |
 | Serviço estático local | VERIFICADO: build de produção, container healthy com restart policy, cache revalidável, sem dependência do terminal |
+| Demonstração no navegador com login | VERIFICADO pela VM em 10.100.62.4:4187: HTTP Basic no servidor, assets protegidos, jogo carregado e movimento. Acesso pela rede/VPN; confirmação do Edge do cliente pendente; não é publicação Engineering |
 | HML pelo Huddle | BLOQUEADO EXTERNO: sem ambiente/URL do jogo, conexão expirada/import bloqueado, provider/gateway desabilitados e sem aprovação independente |
 
 Não há erro bloqueante conhecido no percurso normal que foi exercitado. Isso não

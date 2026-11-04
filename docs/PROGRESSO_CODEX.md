@@ -1,5 +1,14 @@
 # Progresso recuperável — Black Bird: Revolução
 
+## Acesso simples para apresentação — 04/11/2026 14:14 UTC
+
+- Pedido mais recente: abrir no Edge com login temporário da aplicação; não exigir autenticação na VM. Preparado e testado **http://10.100.62.4:4187/**, na rede privada/VPN já alcançada pelo cliente via SSH. A validação do Edge do cliente ainda aguarda resposta; navegador na VM confirmou menu, assets e movimento pelo IP privado.
+- Container `black-bird-codex-browser-demo-20261104`, imagem `black-bird-revolucao:browser-auth-20261104`, build `bb-9304faa4568d`; restart unless-stopped/128 MiB/0,5 CPU. Vinculado apenas a `10.100.62.4:4187` e `127.0.0.1:4187`. Nenhum DNS, proxy de portal, firewall global, Huddle ou serviço alheio alterado. O original 4186 continua healthy.
+- Novo entrypoint `docker/40-blackbird-auth.sh`, incluído no Dockerfile, configura HTTP Basic no Nginx com usuário/hash vindos do runtime. Sem credenciais no Git/imagem/bundle. A senha temporária foi informada pelo proprietário no chat; não copiá-la para documentação. Runtime env com hash em `/tmp/blackbird-demo-auth.env`, modo 0600; não imprimir seu conteúdo.
+- Teste real: `browser-auth.mjs` com credenciais por environment de processo. Anônimo/credencial incorreta recebem 401, HTML/assets/build-info protegidos, health 200, login válido abre jogo e Nero move sobre o chão. JSON/PNG em `docs/evidence/20261104/browser-auth-private/`. Configuração parcial falhou fechada; configuração sem auth passou nginx -t. 36 testes passaram; build Docker passou.
+- Fronteira: endereço temporário de demonstração na rede existente; NÃO é HML gerada ao conectar o repo, nem HTTPS externo ou automação Engineering comprovada. O fluxo Engineering deve entregar um link de navegador após build/health/gateway; as dependências operacionais registradas abaixo continuam bloqueadas. Não tratar login Basic do jogo como substituto das aprovações/IAM do gateway.
+- Próxima ação: confirmar acesso no Edge do cliente, concluir checkpoint/push das mudanças; se o proprietário escolher o fluxo completo Engineering, trabalhar no repositório/branch de desenvolvimento autorizado, sem alterar checkout prod ou fabricar aprovações. A pergunta de escopo foi enviada e ainda está pendente.
+
 ## Estado operacional — 04/11/2026 03:06 UTC
 
 - Repositório `/home/matheus/blackbirds-teste`, branch `black-bird-revolucao`. Base recuperada `8661b94`; código funcional agora `401f4c3` (após `1bf06d2`). Conta/autor Git: `matos-engineer-IA`. Evidências e scripts legíveis acompanham este checkpoint; nenhum trabalho alheio removido.
